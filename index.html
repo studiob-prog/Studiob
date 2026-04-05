@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tablero — Estudio de Artes Escenicas</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #F7F6F3; min-height: 100vh; }
+  button:hover { opacity: 0.85; }
+  input[type=checkbox] { cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useMemo } = React;
+
+const DISCIPLINA_COLORS = {
+“Canto”: { bg: “#FF6B35”, light: “#FFF0EB”, text: “#FF6B35” },
+“Teatro”: { bg: “#7C3AED”, light: “#F3EEFF”, text: “#7C3AED” },
+“Danza”: { bg: “#E91E8C”, light: “#FFEEF7”, text: “#E91E8C” },
+“Cine”: { bg: “#0EA5E9”, light: “#E8F7FF”, text: “#0EA5E9” },
+};
+
+const INITIAL_GRUPOS = [
+{ id: 1, nombre: “Canto Individual CDMX”, disciplina: “Canto”, alumnos: 9, tarifa: 1711, dia: “Mar / Jue / Dom”, hora: “Varios”, modalidad: “Individual”, estado: “Activo”, detalle: “Diego $1,500 · Jorge $3,000 · Atzin $1,500 · Alexa $1,500 · Jaime $1,500 · Elidey $1,500 · Mariana $1,500 · Karla $1,500 · TanTan $1,400” },
+{ id: 2, nombre: “Canto Individual Atizapan”, disciplina: “Canto”, alumnos: 4, tarifa: 1425, dia: “Mie / Vie”, hora: “Varios”, modalidad: “Individual”, estado: “Activo”, detalle: “Angel $1,200 · Ceci $1,500 · Bruno $1,500 · Anahi $1,500” },
+{ id: 3, nombre: “Canto Grupal CDMX”, disciplina: “Canto”, alumnos: 3, tarifa: 667, dia: “Domingo”, hora: “11:00”, modalidad: “Grupal”, estado: “Activo”, detalle: “Andres $800 · Alexa $800 · Diego $600” },
+{ id: 4, nombre: “Canto Grupal Atizapan”, disciplina: “Canto”, alumnos: 5, tarifa: 1040, dia: “Domingo”, hora: “17:00”, modalidad: “Grupal”, estado: “Activo”, detalle: “Gio $960 · Sophie $960 · Alizee $960 · Damaris $960 · Renee $1,200” },
+{ id: 5, nombre: “Teatro Musical — Heathers”, disciplina: “Teatro”, alumnos: 5, tarifa: 1200, dia: “Domingo”, hora: “14:00-17:00”, modalidad: “Grupal”, estado: “Activo”, detalle: “Gio · Sophie · Damaris · Dany · Alizee” },
+{ id: 8, nombre: “Teatro Musical — Mentiras”, disciplina: “Teatro”, alumnos: 1, tarifa: 4000, dia: “Lunes”, hora: “20:00-23:00”, modalidad: “Grupal”, estado: “Activo”, detalle: “Grupo activo — cuota fija $4,000/mes” },
+{ id: 6, nombre: “Cine / Actuacion para Camara”, disciplina: “Cine”, alumnos: 6, tarifa: 1200, dia: “Por definir”, hora: “Por definir”, modalidad: “Grupal”, estado: “Activo”, detalle: “Omar · Luis · Irlanda · Andres · Pau · Angel” },
+{ id: 7, nombre: “Actuacion Escenica”, disciplina: “Teatro”, alumnos: 2, tarifa: 1200, dia: “Por definir”, hora: “Por definir”, modalidad: “Individual”, estado: “Activo”, detalle: “Irlanda · Andres” },
+{ id: 9, nombre: “Creacion Escenica — Facultad de Cine”, disciplina: “Teatro”, alumnos: 6, tarifa: 1500, dia: “Lunes”, hora: “18:00-20:00”, modalidad: “Grupal”, estado: “Pausado”, detalle: “En apertura · 13 abr - 6 jul 2026 · $3,000 taller / $1,500 mens. / $1,200 estudiantes” },
+{ id: 10, nombre: “Coro — Escuela Ford Atizapan”, disciplina: “Canto”, alumnos: 1, tarifa: 5400, dia: “Mie y Vie”, hora: “08:00-10:00”, modalidad: “Institucional”, estado: “Activo”, detalle: “Contrato con escuela primaria Ford, Atizapan” },
+{ id: 11, nombre: “Colegio Harden CDMX — Canto”, disciplina: “Canto”, alumnos: 0, tarifa: 0, dia: “Lun o Mar”, hora: “Por confirmar”, modalidad: “Institucional”, estado: “Pausado”, detalle: “Propuesta pendiente” },
+{ id: 12, nombre: “Colegio Harden CDMX — Actuacion”, disciplina: “Teatro”, alumnos: 0, tarifa: 0, dia: “Lun o Mar”, hora: “Por confirmar”, modalidad: “Institucional”, estado: “Pausado”, detalle: “Propuesta pendiente” },
+];
+
+const INITIAL_PRODUCCIONES = [
+{ id: 1, nombre: “Festival de Cine + Ensamble B”, tipo: “Profesional”, etapa: “Fechas confirmadas”, fecha: “2026-06-04”, presupuesto: 20000, captado: 0, notas: “4-7 jun. Cortometraje alumnos de cine + actividad Ensamble B” },
+{ id: 2, nombre: “Heathers — Teatro Musical con Musica en Vivo”, tipo: “Profesional”, etapa: “En ensayos”, fecha: “2026-07-01”, presupuesto: 29000, captado: 0, notas: “Teatro 1,000 personas. Costo x funcion: $29,000. Proyeccion: 60% aforo x $200 = $91,000 neto/funcion.” },
+];
+
+const INITIAL_CONCIERTOS = [
+{ id: 1, alumno: “Diego”, foro: “Belle Epoque”, mes: “Mayo”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 2, alumno: “Mariana”, foro: “Belle Epoque”, mes: “Mayo”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 3, alumno: “Angel”, foro: “Studio B”, mes: “Mayo”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 4, alumno: “Ceci”, foro: “Studio B”, mes: “Mayo”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 5, alumno: “Jorge”, foro: “Belle Epoque”, mes: “Junio”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 6, alumno: “Karla”, foro: “Belle Epoque”, mes: “Junio”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 7, alumno: “Bruno”, foro: “Studio B”, mes: “Junio”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 8, alumno: “Anahi”, foro: “Studio B”, mes: “Junio”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 9, alumno: “Alexa”, foro: “Belle Epoque”, mes: “Agosto”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 10, alumno: “Jaime”, foro: “Belle Epoque”, mes: “Agosto”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 11, alumno: “Elidey”, foro: “Studio B”, mes: “Septiembre”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 12, alumno: “Atzin”, foro: “Studio B”, mes: “Septiembre”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+{ id: 13, alumno: “TanTan”, foro: “Belle Epoque”, mes: “Octubre”, estado: “pendiente”, cuotaCobrada: false, asistentes: 0 },
+];
+
+const INITIAL_PASOS = [
+{ id: 1, categoria: “Conciertos”, texto: “Comunicar programa de recitales a todos los alumnos de canto”, hecho: false, prioridad: “alta” },
+{ id: 2, categoria: “Conciertos”, texto: “Cobrar cuota de produccion ($800) a cada alumno antes de su concierto”, hecho: false, prioridad: “alta” },
+{ id: 3, categoria: “Conciertos”, texto: “Abrir link de MercadoPago para venta de entradas por concierto”, hecho: false, prioridad: “alta” },
+{ id: 4, categoria: “Conciertos”, texto: “Confirmar fechas de Mayo en Belle Epoque (Diego, Mariana)”, hecho: false, prioridad: “alta” },
+{ id: 5, categoria: “Conciertos”, texto: “Confirmar fechas de Mayo en Studio B (Angel, Ceci)”, hecho: false, prioridad: “alta” },
+{ id: 6, categoria: “Conciertos”, texto: “Definir logistica de video/foto para documentar cada recital”, hecho: false, prioridad: “media” },
+{ id: 7, categoria: “Heathers”, texto: “Confirmar fecha exacta de funcion(es) en julio”, hecho: false, prioridad: “alta” },
+{ id: 8, categoria: “Heathers”, texto: “Cerrar contrato con el teatro (pago de $14,000/funcion)”, hecho: false, prioridad: “alta” },
+{ id: 9, categoria: “Heathers”, texto: “Confirmar y contratar ensamble de musicos ($5,000/funcion)”, hecho: false, prioridad: “alta” },
+{ id: 10, categoria: “Heathers”, texto: “Abrir preventa de boletos — iniciar con red de alumnos y familias”, hecho: false, prioridad: “alta” },
+{ id: 11, categoria: “Heathers”, texto: “Cerrar vestuario y produccion ($10,000)”, hecho: false, prioridad: “media” },
+{ id: 12, categoria: “Heathers”, texto: “Definir precio de boletos y tiers (VIP / general)”, hecho: false, prioridad: “media” },
+{ id: 13, categoria: “Heathers”, texto: “Buscar patrocinadores o empresas para bloques de boletos”, hecho: false, prioridad: “media” },
+{ id: 14, categoria: “Festival Cine”, texto: “Confirmar programa completo del festival 4-7 junio”, hecho: false, prioridad: “alta” },
+{ id: 15, categoria: “Festival Cine”, texto: “Terminar corto con alumnos de cine antes del festival”, hecho: false, prioridad: “alta” },
+{ id: 16, categoria: “Festival Cine”, texto: “Definir entrada/cuota del festival y abrir registro”, hecho: false, prioridad: “media” },
+{ id: 17, categoria: “Festival Cine”, texto: “Coordinar participacion del Ensamble B”, hecho: false, prioridad: “media” },
+{ id: 18, categoria: “Institucional”, texto: “Enviar propuesta formal a Colegio Harden (canto + actuacion)”, hecho: false, prioridad: “alta” },
+{ id: 19, categoria: “Institucional”, texto: “Confirmar inscritos del Taller Creacion Escenica — Fac. Cine”, hecho: false, prioridad: “alta” },
+{ id: 20, categoria: “Institucional”, texto: “Cobrar inscripciones del Taller Creacion Escenica”, hecho: false, prioridad: “alta” },
+{ id: 21, categoria: “Estudio”, texto: “Definir horarios del grupo de Cine / Actuacion para Camara”, hecho: false, prioridad: “media” },
+{ id: 22, categoria: “Estudio”, texto: “Definir horarios de Actuacion Escenica (Irlanda, Andres)”, hecho: false, prioridad: “media” },
+{ id: 23, categoria: “Estudio”, texto: “Abrir cuenta bancaria exclusiva para el estudio”, hecho: false, prioridad: “alta” },
+{ id: 24, categoria: “Estudio”, texto: “Establecer dia fijo de cobro mensual (del 1 al 5)”, hecho: false, prioridad: “alta” },
+{ id: 25, categoria: “Estudio”, texto: “Buscar apoyo administrativo (aunque sea medio tiempo)”, hecho: false, prioridad: “media” },
+];
+
+const ETAPA_STYLE = {
+“En planeacion”: { bg: “#FEF3C7”, text: “#92400E” },
+“Buscando financiamiento”: { bg: “#FCE7F3”, text: “#9D174D” },
+“Fechas confirmadas”: { bg: “#DBEAFE”, text: “#1E40AF” },
+“En ensayos”: { bg: “#D1FAE5”, text: “#065F46” },
+“Estreno”: { bg: “#EDE9FE”, text: “#5B21B6” },
+};
+
+const ESTADO_CONCIERTO = {
+“pendiente”: { bg: “#F3F4F6”, text: “#6B7280”, label: “Pendiente” },
+“confirmado”: { bg: “#DBEAFE”, text: “#1E40AF”, label: “Confirmado” },
+“realizado”: { bg: “#D1FAE5”, text: “#065F46”, label: “Realizado” },
+};
+
+const CAT_COLORS = {
+“Conciertos”: “#FF6B35”, “Heathers”: “#7C3AED”,
+“Festival Cine”: “#0EA5E9”, “Institucional”: “#059669”, “Estudio”: “#6B7280”,
+};
+
+const fmx = n => new Intl.NumberFormat(“es-MX”, { style: “currency”, currency: “MXN”, maximumFractionDigits: 0 }).format(n);
+
+const Badge = ({ label, style }) => (
+<span style={{ …style, padding: “2px 10px”, borderRadius: 20, fontSize: 11, fontWeight: 700 }}>{label}</span>
+);
+
+function Modal({ onClose, children }) {
+return (
+<div onClick={onClose} style={{ position: “fixed”, inset: 0, background: “rgba(0,0,0,0.5)”, zIndex: 100, display: “flex”, alignItems: “center”, justifyContent: “center” }}>
+<div onClick={e => e.stopPropagation()} style={{ background: “#fff”, borderRadius: 14, padding: 24, width: “90%”, maxWidth: 440, maxHeight: “90vh”, overflowY: “auto”, boxShadow: “0 20px 60px rgba(0,0,0,0.2)” }}>
+{children}
+</div>
+</div>
+);
+}
+
+function FieldInput({ label, value, onChange, type = “text” }) {
+return (
+<label style={{ display: “flex”, flexDirection: “column”, gap: 3, fontSize: 12, color: “#666” }}>
+{label}
+<input type={type} value={value} onChange={onChange}
+style={{ padding: “7px 10px”, border: “1.5px solid #E5E7EB”, borderRadius: 7, fontSize: 13, outline: “none” }} />
+</label>
+);
+}
+
+function FieldSelect({ label, value, onChange, options }) {
+return (
+<label style={{ display: “flex”, flexDirection: “column”, gap: 3, fontSize: 12, color: “#666” }}>
+{label}
+<select value={value} onChange={onChange}
+style={{ padding: “7px 10px”, border: “1.5px solid #E5E7EB”, borderRadius: 7, fontSize: 13 }}>
+{options.map(o => <option key={o}>{o}</option>)}
+</select>
+</label>
+);
+}
+
+function BtnRow({ onSave, onClose }) {
+return (
+<div style={{ display: “flex”, gap: 8, justifyContent: “flex-end”, marginTop: 16 }}>
+<button onClick={onClose} style={{ padding: “8px 16px”, borderRadius: 7, border: “1.5px solid #E5E7EB”, background: “none”, cursor: “pointer”, fontSize: 13 }}>Cancelar</button>
+<button onClick={onSave} style={{ padding: “8px 16px”, borderRadius: 7, border: “none”, background: “#1A1A2E”, color: “#fff”, fontWeight: 700, cursor: “pointer”, fontSize: 13 }}>Guardar</button>
+</div>
+);
+}
+
+function GrupoForm({ initial, onSave, onClose }) {
+const [f, setF] = useState(initial || { nombre: “”, disciplina: “Canto”, alumnos: 1, tarifa: 1000, dia: “”, hora: “”, modalidad: “Grupal”, estado: “Activo”, detalle: “” });
+const s = (k, v) => setF(x => ({ …x, [k]: v }));
+return (
+<div style={{ display: “grid”, gap: 10 }}>
+<h3 style={{ fontFamily: “‘Playfair Display’, serif”, fontSize: 17, marginBottom: 4 }}>{initial ? “Editar grupo” : “Nuevo grupo”}</h3>
+<FieldInput label=“Nombre” value={f.nombre} onChange={e => s(“nombre”, e.target.value)} />
+<FieldInput label=“Alumnos” value={f.alumnos} onChange={e => s(“alumnos”, +e.target.value)} type=“number” />
+<FieldInput label=“Tarifa (MXN)” value={f.tarifa} onChange={e => s(“tarifa”, +e.target.value)} type=“number” />
+<FieldInput label=“Dia” value={f.dia} onChange={e => s(“dia”, e.target.value)} />
+<FieldInput label=“Hora” value={f.hora} onChange={e => s(“hora”, e.target.value)} />
+<FieldInput label=“Detalle / alumnos” value={f.detalle} onChange={e => s(“detalle”, e.target.value)} />
+<FieldSelect label=“Disciplina” value={f.disciplina} onChange={e => s(“disciplina”, e.target.value)} options={[“Canto”,“Teatro”,“Danza”,“Cine”]} />
+<FieldSelect label=“Estado” value={f.estado} onChange={e => s(“estado”, e.target.value)} options={[“Activo”,“Pausado”,“Cerrado”]} />
+<FieldSelect label=“Modalidad” value={f.modalidad} onChange={e => s(“modalidad”, e.target.value)} options={[“Individual”,“Grupal”,“Institucional”]} />
+<BtnRow onSave={() => onSave(f)} onClose={onClose} />
+</div>
+);
+}
+
+function ProdForm({ initial, onSave, onClose }) {
+const [f, setF] = useState(initial || { nombre: “”, tipo: “Profesional”, etapa: “En planeacion”, fecha: “”, presupuesto: 0, captado: 0, notas: “” });
+const s = (k, v) => setF(x => ({ …x, [k]: v }));
+return (
+<div style={{ display: “grid”, gap: 10 }}>
+<h3 style={{ fontFamily: “‘Playfair Display’, serif”, fontSize: 17, marginBottom: 4 }}>{initial ? “Editar produccion” : “Nueva produccion”}</h3>
+<FieldInput label=“Nombre” value={f.nombre} onChange={e => s(“nombre”, e.target.value)} />
+<FieldInput label=“Fecha” value={f.fecha} onChange={e => s(“fecha”, e.target.value)} type=“date” />
+<FieldInput label=“Presupuesto total” value={f.presupuesto} onChange={e => s(“presupuesto”, +e.target.value)} type=“number” />
+<FieldInput label=“Ya captado” value={f.captado} onChange={e => s(“captado”, +e.target.value)} type=“number” />
+<label style={{ display: “flex”, flexDirection: “column”, gap: 3, fontSize: 12, color: “#666” }}>
+Notas
+<textarea value={f.notas} onChange={e => s(“notas”, e.target.value)} rows={2}
+style={{ padding: “7px 10px”, border: “1.5px solid #E5E7EB”, borderRadius: 7, fontSize: 13, resize: “vertical” }} />
+</label>
+<FieldSelect label=“Tipo” value={f.tipo} onChange={e => s(“tipo”, e.target.value)} options={[“Profesional”,“Infantil”,“Circo”]} />
+<FieldSelect label=“Etapa” value={f.etapa} onChange={e => s(“etapa”, e.target.value)} options={Object.keys(ETAPA_STYLE)} />
+<BtnRow onSave={() => onSave(f)} onClose={onClose} />
+</div>
+);
+}
+
+function ConciertoModal({ c, onSave, onClose }) {
+const [f, setF] = useState(c);
+const s = (k, v) => setF(x => ({ …x, [k]: v }));
+const entrada = f.asistentes * 150;
+const cafe = f.foro === “Studio B” ? f.asistentes * 150 : 0;
+const cuota = f.cuotaCobrada ? 800 : 0;
+const total = entrada + cafe + cuota;
+return (
+<div style={{ display: “grid”, gap: 12 }}>
+<div>
+<h3 style={{ fontFamily: “‘Playfair Display’, serif”, fontSize: 17 }}>Concierto de {f.alumno}</h3>
+<p style={{ fontSize: 12, color: “#888”, marginTop: 2 }}>{f.mes} · {f.foro}</p>
+</div>
+<FieldSelect label=“Estado” value={f.estado} onChange={e => s(“estado”, e.target.value)} options={Object.keys(ESTADO_CONCIERTO)} />
+<FieldInput label=“Asistentes reales” value={f.asistentes} onChange={e => s(“asistentes”, +e.target.value)} type=“number” />
+<label style={{ display: “flex”, alignItems: “center”, gap: 10, fontSize: 13, color: “#555”, cursor: “pointer” }}>
+<input type=“checkbox” checked={f.cuotaCobrada} onChange={e => s(“cuotaCobrada”, e.target.checked)} style={{ width: 16, height: 16 }} />
+Cuota de produccion cobrada ($800)
+</label>
+<div style={{ background: “#F7F6F3”, borderRadius: 10, padding: “12px 14px”, fontSize: 13 }}>
+<div style={{ display: “flex”, justifyContent: “space-between”, marginBottom: 4, color: “#555” }}><span>Entrada ({f.asistentes} x $150)</span><span>{fmx(entrada)}</span></div>
+{f.foro === “Studio B” && <div style={{ display: “flex”, justifyContent: “space-between”, marginBottom: 4, color: “#555” }}><span>Cafeteria Studio B</span><span>{fmx(cafe)}</span></div>}
+<div style={{ display: “flex”, justifyContent: “space-between”, marginBottom: 8, color: “#555” }}><span>Cuota produccion</span><span>{fmx(cuota)}</span></div>
+<div style={{ display: “flex”, justifyContent: “space-between”, fontWeight: 700, fontSize: 15, borderTop: “1px solid #E5E7EB”, paddingTop: 8 }}><span>Total noche</span><span style={{ color: “#059669” }}>{fmx(total)}</span></div>
+</div>
+<BtnRow onSave={() => onSave(f)} onClose={onClose} />
+</div>
+);
+}
+
+function App() {
+const [tab, setTab] = useState(“resumen”);
+const [grupos, setGrupos] = useState(INITIAL_GRUPOS);
+const [producciones, setProducciones] = useState(INITIAL_PRODUCCIONES);
+const [conciertos, setConciertos] = useState(INITIAL_CONCIERTOS);
+const [pasos, setPasos] = useState(INITIAL_PASOS);
+const [modal, setModal] = useState(null);
+const [nextId, setNextId] = useState(50);
+const [filtroCat, setFiltroCat] = useState(“Todos”);
+
+const ingresoMensual = useMemo(() => grupos.filter(g => g.estado === “Activo”).reduce((s, g) => s + g.alumnos * g.tarifa, 0), [grupos]);
+const totalAlumnos = useMemo(() => grupos.filter(g => g.estado === “Activo”).reduce((s, g) => s + g.alumnos, 0), [grupos]);
+const ingresoConciertoTotal = useMemo(() => conciertos.reduce((s, c) => s + c.asistentes * 150 + (c.foro === “Studio B” ? c.asistentes * 150 : 0) + (c.cuotaCobrada ? 800 : 0), 0), [conciertos]);
+const conciertosPorMes = useMemo(() => conciertos.reduce((acc, c) => { (acc[c.mes] = acc[c.mes] || []).push(c); return acc; }, {}), [conciertos]);
+const pasosPorCat = useMemo(() => pasos.reduce((acc, p) => { (acc[p.categoria] = acc[p.categoria] || []).push(p); return acc; }, {}), [pasos]);
+const totalHechos = pasos.filter(p => p.hecho).length;
+const pctAvance = Math.round((totalHechos / pasos.length) * 100);
+
+const saveGrupo = f => { if (f.id) setGrupos(gs => gs.map(g => g.id === f.id ? f : g)); else { setGrupos(gs => […gs, { …f, id: nextId }]); setNextId(n => n + 1); } setModal(null); };
+const saveProd = f => { if (f.id) setProducciones(ps => ps.map(p => p.id === f.id ? f : p)); else { setProducciones(ps => […ps, { …f, id: nextId }]); setNextId(n => n + 1); } setModal(null); };
+const saveConcierto = f => { setConciertos(cs => cs.map(c => c.id === f.id ? f : c)); setModal(null); };
+const togglePaso = id => setPasos(ps => ps.map(p => p.id === id ? { …p, hecho: !p.hecho } : p));
+
+const TABS = [
+{ id: “resumen”, label: “Resumen” },
+{ id: “grupos”, label: “Grupos” },
+{ id: “producciones”, label: “Producciones” },
+{ id: “conciertos”, label: “Conciertos” },
+{ id: “proyeccion”, label: “Proyeccion” },
+{ id: “pasos”, label: “Pasos” },
+];
+
+const card = (children, extra = {}) => (
+<div style={{ border: “1.5px solid #E5E7EB”, borderRadius: 12, padding: “14px 16px”, marginBottom: 10, …extra }}>{children}</div>
+);
+
+return (
+<div style={{ paddingBottom: 40 }}>
+<div style={{ background: “#1A1A2E”, padding: “22px 24px 18px” }}>
+<p style={{ color: “#FF6B35”, fontWeight: 700, letterSpacing: 3, fontSize: 10, marginBottom: 4, textTransform: “uppercase” }}>Estudio de Artes Escenicas</p>
+<h1 style={{ color: “#fff”, fontFamily: “‘Playfair Display’, serif”, fontSize: 22, marginBottom: 4 }}>Tablero de Control</h1>
+<p style={{ color: “#8B8FA8”, fontSize: 12 }}>Grupos · Conciertos · Producciones · Proyeccion · Pasos</p>
+</div>
+
+```
+  <div style={{ display: "flex", overflowX: "auto", gap: 2, padding: "12px 16px 0", background: "#F7F6F3" }}>
+    {TABS.map(t => (
+      <button key={t.id} onClick={() => setTab(t.id)} style={{
+        padding: "8px 14px", borderRadius: "8px 8px 0 0", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700,
+        background: tab === t.id ? "#fff" : "transparent",
+        color: tab === t.id ? "#1A1A2E" : "#888", whiteSpace: "nowrap",
+      }}>{t.label}</button>
+    ))}
+  </div>
+
+  <div style={{ background: "#fff", margin: "0 16px", borderRadius: "0 12px 12px 12px", padding: 18, boxShadow: "0 4px 20px rgba(0,0,0,0.07)" }}>
+
+    {tab === "resumen" && (
+      <div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 10, marginBottom: 22 }}>
+          {[
+            { label: "Ingreso mensual", value: fmx(ingresoMensual), color: "#FF6B35" },
+            { label: "Alumnos activos", value: totalAlumnos, color: "#7C3AED" },
+            { label: "Recitales progr.", value: conciertos.length, color: "#E91E8C" },
+            { label: "Captado recitales", value: fmx(ingresoConciertoTotal), color: "#059669" },
+            { label: "Avance pasos", value: pctAvance + "%", color: "#6B7280" },
+          ].map(m => (
+            <div key={m.label} style={{ background: "#F7F6F3", borderRadius: 10, padding: "12px 14px", borderLeft: `3px solid ${m.color}` }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#1A1A2E" }}>{m.value}</div>
+              <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>{m.label}</div>
+            </div>
+          ))}
+        </div>
+        <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, marginBottom: 10 }}>Por disciplina</h3>
+        {["Canto","Teatro","Danza","Cine"].map(disc => {
+          const total = grupos.filter(g => g.disciplina === disc && g.estado === "Activo").reduce((s, g) => s + g.alumnos * g.tarifa, 0);
+          const pct = ingresoMensual ? Math.round(total / ingresoMensual * 100) : 0;
+          const col = DISCIPLINA_COLORS[disc];
+          return (
+            <div key={disc} style={{ marginBottom: 10 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 3 }}>
+                <span style={{ fontWeight: 600, color: col.text }}>{disc}</span>
+                <span style={{ color: "#555" }}>{fmx(total)} ({pct}%)</span>
+              </div>
+              <div style={{ height: 6, background: "#F0F0F0", borderRadius: 4, overflow: "hidden" }}>
+                <div style={{ height: "100%", width: pct + "%", background: col.bg, borderRadius: 4 }} />
+              </div>
+            </div>
+          );
+        })}
+        <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, margin: "18px 0 10px" }}>Urgentes pendientes</h3>
+        {pasos.filter(p => p.prioridad === "alta" && !p.hecho).slice(0, 5).map(p => (
+          <label key={p.id} style={{ display: "flex", gap: 10, padding: "8px 12px", marginBottom: 6, background: "#FFF9F5", borderRadius: 8, borderLeft: `3px solid ${CAT_COLORS[p.categoria]}`, cursor: "pointer" }}>
+            <input type="checkbox" checked={p.hecho} onChange={() => togglePaso(p.id)} style={{ marginTop: 2 }} />
+            <div>
+              <div style={{ fontSize: 10, color: CAT_COLORS[p.categoria], fontWeight: 700, textTransform: "uppercase" }}>{p.categoria}</div>
+              <div style={{ fontSize: 13, color: "#333" }}>{p.texto}</div>
+            </div>
+          </label>
+        ))}
+        <button onClick={() => setTab("pasos")} style={{ fontSize: 12, color: "#FF6B35", background: "none", border: "none", cursor: "pointer", fontWeight: 700, marginTop: 6 }}>Ver todos los pasos →</button>
+      </div>
+    )}
+
+    {tab === "grupos" && (
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17 }}>Grupos y Clases</h2>
+          <button onClick={() => setModal({ tipo: "grupo" })} style={{ padding: "7px 14px", background: "#1A1A2E", color: "#fff", border: "none", borderRadius: 7, fontWeight: 700, cursor: "pointer", fontSize: 12 }}>+ Nuevo</button>
+        </div>
+        {grupos.map(g => {
+          const col = DISCIPLINA_COLORS[g.disciplina] || { bg: "#888", light: "#f5f5f5", text: "#888" };
+          return (
+            <div key={g.id} style={{ border: `1.5px solid ${col.bg}33`, borderRadius: 12, padding: "12px 14px", background: col.light, marginBottom: 8, display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-start" }}>
+              <div style={{ flex: 1, minWidth: 150 }}>
+                <div style={{ display: "flex", gap: 6, marginBottom: 3, alignItems: "center" }}>
+                  <Badge label={g.disciplina} style={{ background: col.bg, color: "#fff" }} />
+                  <span style={{ fontSize: 10, color: g.estado === "Activo" ? "#059669" : "#EF4444", fontWeight: 700 }}>● {g.estado}</span>
+                </div>
+                <div style={{ fontWeight: 700, fontSize: 14, color: "#1A1A2E" }}>{g.nombre}</div>
+                <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>{g.dia} {g.hora} · {g.modalidad}</div>
+                {g.detalle && <div style={{ fontSize: 11, color: "#aaa", marginTop: 3, lineHeight: 1.5 }}>{g.detalle}</div>}
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: 11, color: "#888" }}>{g.alumnos} al. × {fmx(g.tarifa)}</div>
+                <div style={{ fontWeight: 800, fontSize: 15, color: col.text }}>{fmx(g.alumnos * g.tarifa)}/mes</div>
+              </div>
+              <div style={{ display: "flex", gap: 4 }}>
+                <button onClick={() => setModal({ tipo: "grupo", data: g })} style={{ padding: "5px 10px", borderRadius: 6, border: "1.5px solid #E5E7EB", background: "#fff", cursor: "pointer", fontSize: 11 }}>Editar</button>
+                <button onClick={() => setGrupos(gs => gs.filter(x => x.id !== g.id))} style={{ padding: "5px 8px", borderRadius: 6, border: "1.5px solid #FEE2E2", background: "#FEF2F2", color: "#EF4444", cursor: "pointer", fontSize: 11 }}>X</button>
+              </div>
+            </div>
+          );
+        })}
+        <div style={{ padding: "12px 14px", background: "#F7F6F3", borderRadius: 10, display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
+          <span style={{ fontSize: 13, color: "#555" }}>Total mensual (activos)</span>
+          <span style={{ fontWeight: 800, fontSize: 18, color: "#FF6B35" }}>{fmx(ingresoMensual)}</span>
+        </div>
+      </div>
+    )}
+
+    {tab === "producciones" && (
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17 }}>Producciones</h2>
+          <button onClick={() => setModal({ tipo: "prod" })} style={{ padding: "7px 14px", background: "#7C3AED", color: "#fff", border: "none", borderRadius: 7, fontWeight: 700, cursor: "pointer", fontSize: 12 }}>+ Nueva</button>
+        </div>
+        {producciones.map(p => {
+          const pct = p.presupuesto ? Math.round(p.captado / p.presupuesto * 100) : 0;
+          const est = ETAPA_STYLE[p.etapa] || { bg: "#eee", text: "#555" };
+          return (
+            <div key={p.id} style={{ border: "1.5px solid #E5E7EB", borderRadius: 12, padding: "14px 16px", marginBottom: 10 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+                <div>
+                  <div style={{ display: "flex", gap: 6, marginBottom: 5 }}>
+                    <Badge label={p.tipo} style={{ background: "#F3F4F6", color: "#374151" }} />
+                    <Badge label={p.etapa} style={{ background: est.bg, color: est.text }} />
+                  </div>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: "#1A1A2E" }}>{p.nombre}</div>
+                  {p.fecha && <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>Fecha: {p.fecha}</div>}
+                  {p.notas && <div style={{ fontSize: 11, color: "#6B7280", marginTop: 3, fontStyle: "italic" }}>{p.notas}</div>}
+                </div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <button onClick={() => setModal({ tipo: "prod", data: p })} style={{ padding: "5px 10px", borderRadius: 6, border: "1.5px solid #E5E7EB", background: "#fff", cursor: "pointer", fontSize: 11 }}>Editar</button>
+                  <button onClick={() => setProducciones(ps => ps.filter(x => x.id !== p.id))} style={{ padding: "5px 8px", borderRadius: 6, border: "1.5px solid #FEE2E2", background: "#FEF2F2", color: "#EF4444", cursor: "pointer", fontSize: 11 }}>X</button>
+                </div>
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#888", marginBottom: 3 }}>
+                  <span>Captado: {fmx(p.captado)} / {fmx(p.presupuesto)}</span>
+                  <span style={{ fontWeight: 700, color: pct >= 100 ? "#059669" : "#7C3AED" }}>{pct}%</span>
+                </div>
+                <div style={{ height: 6, background: "#F0F0F0", borderRadius: 4, overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: Math.min(pct, 100) + "%", background: pct >= 100 ? "#059669" : "#7C3AED", borderRadius: 4 }} />
+                </div>
+                {p.captado < p.presupuesto && <div style={{ fontSize: 11, color: "#EF4444", marginTop: 3, fontWeight: 600 }}>Falta: {fmx(p.presupuesto - p.captado)}</div>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )}
+
+    {tab === "conciertos" && (
+      <div>
+        <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, marginBottom: 4 }}>Recitales Solistas</h2>
+        <p style={{ fontSize: 12, color: "#888", marginBottom: 14 }}>Cuota produccion $800 · Entrada $150 · Cafeteria Studio B $150/persona</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(120px,1fr))", gap: 8, marginBottom: 18 }}>
+          {[
+            { label: "Programados", value: conciertos.length, color: "#FF6B35" },
+            { label: "Confirmados", value: conciertos.filter(c => c.estado === "confirmado").length, color: "#0EA5E9" },
+            { label: "Realizados", value: conciertos.filter(c => c.estado === "realizado").length, color: "#059669" },
+            { label: "Captado", value: fmx(ingresoConciertoTotal), color: "#7C3AED" },
+          ].map(m => (
+            <div key={m.label} style={{ background: "#F7F6F3", borderRadius: 10, padding: "10px 12px", borderLeft: `3px solid ${m.color}` }}>
+              <div style={{ fontSize: 17, fontWeight: 800, color: "#1A1A2E" }}>{m.value}</div>
+              <div style={{ fontSize: 11, color: "#888" }}>{m.label}</div>
+            </div>
+          ))}
+        </div>
+        {Object.entries(conciertosPorMes).map(([mes, lista]) => (
+          <div key={mes} style={{ marginBottom: 18 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{mes}</div>
+            {lista.map(c => {
+              const est = ESTADO_CONCIERTO[c.estado] || ESTADO_CONCIERTO["pendiente"];
+              const total = c.asistentes * 150 + (c.foro === "Studio B" ? c.asistentes * 150 : 0) + (c.cuotaCobrada ? 800 : 0);
+              return (
+                <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: "1.5px solid #E5E7EB", borderRadius: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                  <div style={{ flex: 1, minWidth: 100 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "#1A1A2E" }}>{c.alumno}</div>
+                    <div style={{ fontSize: 11, color: "#888" }}>{c.foro}{c.asistentes > 0 ? " · " + c.asistentes + " asist." : ""}</div>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                    <Badge label={est.label} style={{ background: est.bg, color: est.text }} />
+                    {c.cuotaCobrada && <Badge label="Cuota OK" style={{ background: "#D1FAE5", color: "#065F46" }} />}
+                    {total > 0 && <span style={{ fontWeight: 700, fontSize: 13, color: "#059669" }}>{fmx(total)}</span>}
+                  </div>
+                  <button onClick={() => setModal({ tipo: "concierto", data: c })} style={{ padding: "5px 12px", borderRadius: 6, border: "1.5px solid #E5E7EB", background: "#fff", cursor: "pointer", fontSize: 11 }}>Actualizar</button>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+        <div style={{ padding: "12px 14px", background: "#F0EDFF", borderRadius: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 10, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase" }}>Proyeccion total 13 recitales</div>
+            <div style={{ fontSize: 11, color: "#888" }}>60 asistentes prom. · 6 noches Studio B</div>
+          </div>
+          <div style={{ fontWeight: 800, fontSize: 17, color: "#7C3AED" }}>{fmx(13 * (60*150 + 800) + 6 * 60*150)}</div>
+        </div>
+      </div>
+    )}
+
+    {tab === "proyeccion" && (
+      <div>
+        <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, marginBottom: 14 }}>Proyeccion Financiera</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(120px,1fr))", gap: 8, marginBottom: 20 }}>
+          {[["Este mes", ingresoMensual, "#FF6B35"], ["3 meses", ingresoMensual*3, "#E91E8C"], ["6 meses", ingresoMensual*6, "#7C3AED"], ["12 meses", ingresoMensual*12, "#0EA5E9"]].map(([label, val, color]) => (
+            <div key={label} style={{ textAlign: "center", padding: "12px 8px", borderRadius: 10, border: `2px solid ${color}22`, background: color + "08" }}>
+              <div style={{ fontSize: 10, color: "#888", fontWeight: 700, textTransform: "uppercase", marginBottom: 4 }}>{label}</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color }}>{fmx(val)}</div>
+              <div style={{ fontSize: 10, color: "#aaa" }}>solo clases</div>
+            </div>
+          ))}
+        </div>
+        <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, marginBottom: 10 }}>Motores adicionales</h3>
+        {[
+          ["Recitales solistas (13)", 117000, 200000, "#FF6B35"],
+          ["Heathers — 2 funciones", 91000, 182000, "#7C3AED"],
+          ["Festival de Cine", 10000, 30000, "#0EA5E9"],
+          ["Colegio Harden (si cierra)", 8000, 15000, "#059669"],
+        ].map(([label, min, max, color]) => (
+          <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", background: "#F7F6F3", borderRadius: 8, marginBottom: 6 }}>
+            <span style={{ fontSize: 13, color: "#333" }}>{label}</span>
+            <span style={{ fontWeight: 700, fontSize: 13, color, whiteSpace: "nowrap" }}>{fmx(min)} – {fmx(max)}</span>
+          </div>
+        ))}
+        <div style={{ marginTop: 14, padding: "14px 16px", background: "#1A1A2E", borderRadius: 12, color: "#fff" }}>
+          <div style={{ fontSize: 10, color: "#FF6B35", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Potencial total abr – dic 2026</div>
+          {[["Clases (9 meses)", fmx(ingresoMensual*9)], ["Recitales solistas", "$117k – $200k"], ["Heathers", "$91k – $182k"], ["Festival Cine", "$10k – $30k"], ["Colegio Harden", "$72k – $135k"]].map(([k, v]) => (
+            <div key={k} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, paddingBottom: 6, marginBottom: 6, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+              <span style={{ color: "#8B8FA8" }}>{k}</span>
+              <span style={{ color: "#fff", fontWeight: 600 }}>{v}</span>
+            </div>
+          ))}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 4 }}>
+            <span style={{ fontSize: 13, color: "#8B8FA8" }}>Total estimado</span>
+            <span style={{ fontSize: 20, fontWeight: 800, color: "#FF6B35" }}>$800k – $1.2M</span>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {tab === "pasos" && (
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17 }}>Lista de Pasos</h2>
+          <span style={{ fontSize: 13, fontWeight: 700, color: pctAvance >= 80 ? "#059669" : pctAvance >= 40 ? "#FF6B35" : "#EF4444" }}>{totalHechos}/{pasos.length} · {pctAvance}%</span>
+        </div>
+        <div style={{ height: 6, background: "#F0F0F0", borderRadius: 4, overflow: "hidden", marginBottom: 16 }}>
+          <div style={{ height: "100%", width: pctAvance + "%", background: "#FF6B35", borderRadius: 4, transition: "width 0.4s" }} />
+        </div>
+        <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 14 }}>
+          {["Todos", ...Object.keys(pasosPorCat)].map(cat => (
+            <button key={cat} onClick={() => setFiltroCat(cat)} style={{
+              padding: "4px 12px", borderRadius: 20, border: "1.5px solid", cursor: "pointer", fontSize: 11, fontWeight: 700,
+              borderColor: filtroCat === cat ? (CAT_COLORS[cat] || "#1A1A2E") : "#E5E7EB",
+              background: filtroCat === cat ? (CAT_COLORS[cat] || "#1A1A2E") : "#fff",
+              color: filtroCat === cat ? "#fff" : "#555",
+            }}>{cat}</button>
+          ))}
+        </div>
+        {Object.entries(pasosPorCat).filter(([cat]) => filtroCat === "Todos" || filtroCat === cat).map(([cat, items]) => (
+          <div key={cat} style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <div style={{ width: 10, height: 10, borderRadius: "50%", background: CAT_COLORS[cat] || "#888" }} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: CAT_COLORS[cat] || "#888", textTransform: "uppercase", letterSpacing: 0.5 }}>{cat}</span>
+              <span style={{ fontSize: 11, color: "#aaa" }}>{items.filter(p => p.hecho).length}/{items.length}</span>
+            </div>
+            {items.map(p => (
+              <label key={p.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "9px 12px", borderRadius: 8, background: p.hecho ? "#F0FDF4" : "#F9FAFB", border: `1px solid ${p.hecho ? "#BBF7D0" : "#E5E7EB"}`, marginBottom: 5, cursor: "pointer" }}>
+                <input type="checkbox" checked={p.hecho} onChange={() => togglePaso(p.id)} style={{ width: 15, height: 15, marginTop: 1, accentColor: CAT_COLORS[cat] || "#FF6B35", flexShrink: 0 }} />
+                <span style={{ fontSize: 13, color: p.hecho ? "#6B7280" : "#1A1A2E", textDecoration: p.hecho ? "line-through" : "none", flex: 1 }}>{p.texto}{!p.hecho && p.prioridad === "alta" && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, color: "#EF4444" }}>URGENTE</span>}</span>
+              </label>
+            ))}
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+
+  {modal?.tipo === "grupo" && <Modal onClose={() => setModal(null)}><GrupoForm initial={modal.data} onSave={saveGrupo} onClose={() => setModal(null)} /></Modal>}
+  {modal?.tipo === "prod" && <Modal onClose={() => setModal(null)}><ProdForm initial={modal.data} onSave={saveProd} onClose={() => setModal(null)} /></Modal>}
+  {modal?.tipo === "concierto" && <Modal onClose={() => setModal(null)}><ConciertoModal c={modal.data} onSave={saveConcierto} onClose={() => setModal(null)} /></Modal>}
+</div>
+```
+
+);
+}
+
+ReactDOM.createRoot(document.getElementById(“root”)).render(<App />);
+</script>
+
+</body>
+</html>
