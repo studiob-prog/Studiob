@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio B · Ruta Crítica de Ventas 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --gold: #C9A84C;
+  --gold-l: #E8C97A;
+  --gold-d: #8B6E2A;
+  --ink: #0C0B09;
+  --ink-2: #161410;
+  --ink-3: #201E1A;
+  --ink-4: #2A2722;
+  --cream: #F5EFE0;
+  --mist: rgba(245,239,224,0.5);
+  --mist-l: rgba(245,239,224,0.15);
+  --done: #2D6A4F;
+  --done-l: #52B788;
+  --pending: #C9A84C;
+  --urgent: #E63946;
+  --r: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--ink);
+  color: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  background: var(--ink-2);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: var(--gold);
+  letter-spacing: .12em;
+}
+.header-logo span { color: var(--cream); }
+
+.progress-bar-wrap {
+  flex: 1;
+  max-width: 400px;
+  margin: 0 2rem;
+}
+.progress-label {
+  font-size: .7rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--mist);
+  margin-bottom: .4rem;
+  display: flex;
+  justify-content: space-between;
+}
+.progress-bar {
+  height: 4px;
+  background: var(--ink-4);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-d), var(--gold-l));
+  border-radius: 2px;
+  transition: width .5s ease;
+}
+
+.header-stats {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+.stat {
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: var(--gold);
+  line-height: 1;
+}
+.stat-label {
+  font-size: .6rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--mist);
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 0;
+  background: var(--ink-2);
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+  padding: 0 2rem;
+  overflow-x: auto;
+}
+.tab {
+  padding: .9rem 1.4rem;
+  font-size: .78rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--mist);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+  white-space: nowrap;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.tab.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+.tab:hover { color: var(--cream); }
+
+/* MAIN */
+.main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* PHASE HEADER */
+.phase-intro {
+  margin-bottom: 2rem;
+  padding: 1.5rem 2rem;
+  background: var(--ink-2);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: var(--r);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+}
+.phase-intro h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: var(--gold);
+  letter-spacing: .08em;
+}
+.phase-intro p {
+  font-size: .88rem;
+  color: var(--mist);
+  line-height: 1.6;
+  margin-top: .3rem;
+}
+.phase-badge {
+  background: var(--ink-4);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 4px;
+  padding: .5rem 1rem;
+  text-align: center;
+}
+.phase-badge-label { font-size: .6rem; letter-spacing: .15em; text-transform: uppercase; color: var(--mist); }
+.phase-badge-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--gold-l); }
+
+/* TASK CARD */
+.tasks { display: flex; flex-direction: column; gap: .75rem; }
+
+.task-card {
+  background: var(--ink-2);
+  border: 1px solid rgba(201,168,76,0.12);
+  border-radius: var(--r);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.task-card:hover { border-color: rgba(201,168,76,0.3); }
+.task-card.done { border-color: rgba(82,183,136,0.3); background: rgba(45,106,79,0.08); }
+.task-card.urgent { border-left: 3px solid var(--urgent); }
+
+.task-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+}
+
+.task-check {
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid rgba(201,168,76,0.4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all .2s;
+  background: none;
+}
+.task-card.done .task-check {
+  background: var(--done);
+  border-color: var(--done);
+}
+.task-check svg { display: none; }
+.task-card.done .task-check svg { display: block; }
+
+.task-title {
+  font-size: .92rem;
+  font-weight: 500;
+  color: var(--cream);
+  line-height: 1.3;
+}
+.task-card.done .task-title {
+  color: var(--mist);
+  text-decoration: line-through;
+  text-decoration-color: var(--done-l);
+}
+.task-meta { display: flex; gap: .5rem; align-items: center; flex-shrink: 0; }
+
+.badge {
+  font-family: 'DM Mono', monospace;
+  font-size: .6rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: .2rem .6rem;
+  border-radius: 3px;
+}
+.badge-urgent { background: rgba(230,57,70,0.15); color: #ff6b75; border: 1px solid rgba(230,57,70,0.3); }
+.badge-today { background: rgba(201,168,76,0.15); color: var(--gold-l); border: 1px solid rgba(201,168,76,0.3); }
+.badge-week { background: rgba(100,149,237,0.1); color: #8ab4f8; border: 1px solid rgba(100,149,237,0.2); }
+.badge-ongoing { background: rgba(245,239,224,0.06); color: var(--mist); border: 1px solid rgba(245,239,224,0.1); }
+.badge-done { background: rgba(82,183,136,0.1); color: var(--done-l); border: 1px solid rgba(82,183,136,0.2); }
+
+.badge-who {
+  font-size: .65rem;
+  background: var(--ink-4);
+  color: var(--mist);
+  border: 1px solid rgba(245,239,224,0.08);
+  padding: .2rem .6rem;
+  border-radius: 3px;
+}
+
+.expand-btn {
+  background: none;
+  border: none;
+  color: var(--mist);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: .2rem;
+  transition: transform .2s, color .2s;
+  flex-shrink: 0;
+}
+.task-card.open .expand-btn { transform: rotate(180deg); color: var(--gold); }
+
+/* TASK BODY */
+.task-body {
+  display: none;
+  padding: 0 1.2rem 1.2rem;
+  border-top: 1px solid rgba(201,168,76,0.08);
+}
+.task-card.open .task-body { display: block; }
+
+.task-desc {
+  font-size: .85rem;
+  color: var(--mist);
+  line-height: 1.7;
+  margin: .8rem 0;
+}
+
+/* MESSAGE BOX */
+.msg-box {
+  background: var(--ink-3);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 6px;
+  margin: .8rem 0;
+}
+.msg-box-header {
+  padding: .6rem 1rem;
+  font-size: .65rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.msg-box-body {
+  padding: .9rem 1rem;
+  font-size: .82rem;
+  line-height: 1.75;
+  color: var(--cream);
+  white-space: pre-wrap;
+  font-family: 'DM Sans', sans-serif;
+}
+.copy-btn {
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.2);
+  color: var(--gold);
+  font-size: .62rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .2rem .7rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background .15s;
+  font-family: 'DM Mono', monospace;
+}
+.copy-btn:hover { background: rgba(201,168,76,0.25); }
+.copy-btn.copied { color: var(--done-l); border-color: var(--done-l); }
+
+/* INFO BOX */
+.info-box {
+  background: rgba(201,168,76,0.05);
+  border-left: 2px solid var(--gold-d);
+  padding: .7rem 1rem;
+  border-radius: 0 4px 4px 0;
+  margin: .6rem 0;
+  font-size: .82rem;
+  color: var(--mist);
+  line-height: 1.6;
+}
+.info-box strong { color: var(--gold-l); font-weight: 500; }
+
+/* SUBTASKS */
+.subtasks { display: flex; flex-direction: column; gap: .4rem; margin: .6rem 0; }
+.subtask {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  font-size: .82rem;
+  color: var(--mist);
+  padding: .3rem 0;
+}
+.subtask-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-d);
+  flex-shrink: 0;
+  margin-top: .35rem;
+}
+
+/* TABLE */
+.mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: .8rem 0;
+  font-size: .8rem;
+}
+.mini-table th {
+  text-align: left;
+  padding: .5rem .8rem;
+  font-size: .62rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+  font-weight: 500;
+}
+.mini-table td {
+  padding: .5rem .8rem;
+  color: var(--mist);
+  border-bottom: 1px solid rgba(245,239,224,0.05);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.mini-table tr:last-child td { border-bottom: none; }
+.mini-table td:first-child { color: var(--cream); font-weight: 500; }
+
+/* SECTION LABEL */
+.section-label {
+  font-size: .65rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 1.5rem 0 .6rem;
+  padding-bottom: .4rem;
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+}
+
+/* FINANCIAL BOX */
+.fin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: .8rem 0; }
+.fin-card {
+  background: var(--ink-3);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 6px;
+  padding: 1rem;
+}
+.fin-card-label { font-size: .62rem; letter-spacing: .15em; text-transform: uppercase; color: var(--mist); margin-bottom: .5rem; }
+.fin-card-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--gold); line-height: 1; }
+.fin-card-note { font-size: .72rem; color: var(--mist); margin-top: .3rem; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .header { flex-wrap: wrap; gap: .8rem; }
+  .progress-bar-wrap { max-width: 100%; order: 3; flex: 1 1 100%; }
+  .header-stats { gap: 1rem; }
+  .fin-grid { grid-template-columns: 1fr; }
+  .task-header { grid-template-columns: auto 1fr auto; }
+  .task-meta { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">STUDIO <span>B</span></div>
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>Progreso general</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="header-stats">
+    <div class="stat"><div class="stat-num" id="stat-done">0</div><div class="stat-label">Hechos</div></div>
+    <div class="stat"><div class="stat-num" id="stat-pending">0</div><div class="stat-label">Pendientes</div></div>
+    <div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total</div></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="showTab('kpop')">🎤 Guerreras Kpop</button>
+  <button class="tab" onclick="showTab('escuelas')">🏫 Escuelas</button>
+  <button class="tab" onclick="showTab('empresas')">🏢 Empresas</button>
+  <button class="tab" onclick="showTab('respuestas')">💬 Sistema de Respuestas</button>
+  <button class="tab" onclick="showTab('crm')">📊 CRM & Métricas</button>
+</div>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════
+     TAB 1: GUERRERAS KPOP
+═══════════════════════════════════════ -->
+<div id="tab-kpop" class="section active">
+  <div class="phase-intro">
+    <div>
+      <h2>Guerreras Kpop · Día del Niño</h2>
+      <p>4 funciones en Teatro SME · 30 de abril (17:00 y 18:45 h) · 2 de mayo (17:00 y 18:45 h) · Ruta crítica de venta de boletos y coordinación de funciones.</p>
+    </div>
+    <div style="display:flex;gap:.8rem;">
+      <div class="phase-badge"><div class="phase-badge-label">Costo sede</div><div class="phase-badge-val">$56,000</div></div>
+      <div class="phase-badge"><div class="phase-badge-label">Funciones</div><div class="phase-badge-val">4</div></div>
+    </div>
+  </div>
+
+  <div class="fin-grid">
+    <div class="fin-card"><div class="fin-card-label">Equilibrio (200 x función)</div><div class="fin-card-val">$120,000</div><div class="fin-card-note">Ingreso bruto · utilidad ~$39,000</div></div>
+    <div class="fin-card"><div class="fin-card-label">Óptimo (350 x función)</div><div class="fin-card-val">$210,000</div><div class="fin-card-note">Ingreso bruto · utilidad ~$129,000</div></div>
+  </div>
+
+  <div class="section-label">Precios de boleto sugeridos</div>
+  <table class="mini-table">
+    <tr><th>Tipo</th><th>Precio</th><th>Notas</th></tr>
+    <tr><td>General</td><td>$150</td><td>Venta por MercadoPago y Boletia</td></tr>
+    <tr><td>VIP</td><td>$250</td><td>Primeras 3 filas + foto con elenco post función</td></tr>
+    <tr><td>Grupo escolar</td><td>$100</td><td>Mínimo 20 niños · anticipo 50% reserva</td></tr>
+    <tr><td>Paquete familiar</td><td>$500</td><td>4 personas · cualquier función</td></tr>
+  </table>
+
+  <div class="section-label">Ruta crítica — tareas ordenadas por urgencia</div>
+  <div class="tasks" id="tasks-kpop">
+
+    <div class="task-card urgent" data-id="k1">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'k1')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Registrar el evento en Boletia.com con las 4 funciones</div>
+        <div class="task-meta"><span class="badge badge-urgent">HOY</span><span class="badge-who">Gerard</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Boletia es la plataforma de boletaje cultural más usada en CDMX. Da credibilidad, QR de acceso y página pública del evento. Comisión ~6% pero genera ventas orgánicas.</p>
+        <div class="subtasks">
+          <div class="subtask"><div class="subtask-dot"></div>Ir a boletia.com → Crear cuenta de organizador (gratis)</div>
+          <div class="subtask"><div class="subtask-dot"></div>Crear evento: "Guerreras Kpop · Día del Niño · Teatro SME"</div>
+          <div class="subtask"><div class="subtask-dot"></div>Agregar las 4 funciones con fecha y horario exactos</div>
+          <div class="subtask"><div class="subtask-dot"></div>Configurar 3 tipos de boleto: General $150, VIP $250, Familiar $500</div>
+          <div class="subtask"><div class="subtask-dot"></div>Subir imagen del evento (flyer del espectáculo)</div>
+          <div class="subtask"><div class="subtask-dot"></div>Publicar y copiar los links de cada función</div>
+        </div>
+        <div class="info-box"><strong>Tip:</strong> En la descripción del evento menciona "Espectáculo con artistas egresados del INBAL" y "Teatro SME · Capacidad limitada". La exclusividad vende.</div>
+      </div>
+    </div>
+
+    <div class="task-card urgent" data-id="k2">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'k2')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Crear 4 links de MercadoPago — uno por función</div>
+        <div class="task-meta"><span class="badge badge-urgent">HOY</span><span class="badge-who">Gerard</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Para ventas directas por WhatsApp e Instagram. Más rápido que Boletia para clientes que ya confían en ti. Comisión MP ~3.5%.</p>
+        <div class="subtasks">
+          <div class="subtask"><div class="subtask-dot"></div>Entrar a MercadoPago → Cobrar → Crear link de pago</div>
+          <div class="subtask"><div class="subtask-dot"></div>Link 1: "Guerreras Kpop · 30 Abr 17:00 · General $150"</div>
+          <div class="subtask"><div class="subtask-dot"></div>Link 2: "Guerreras Kpop · 30 Abr 18:45 · General $150"</div>
+          <div class="subtask"><div class="subtask-dot"></div>Link 3: "Guerreras Kpop · 2 May 17:00 · General $150"</div>
+          <div class="subtask"><div class="subtask-dot"></div>Link 4: "Guerreras Kpop · 2 May 18:45 · General $150"</div>
+          <div class="subtask"><div class="subtask-dot"></div>Link adicional: "VIP $250" y "Paquete Familiar $500" (aplica a cualquier función)</div>
+          <div class="subtask"><div class="subtask-dot"></div>Guardar todos los links en un documento compartido con el equipo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card urgent" data-id="k3">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'k3')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Contactar a 6 primarias privadas de Roma / Condesa / Narvarte</div>
+        <div class="task-meta"><span class="badge badge-urgent">HOY</span><span class="badge-who">Ayudante 1</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Las escuelas son el canal más rentable para este evento — grupos de 20–60 niños en una sola venta. Tienen exactamente 2 semanas para organizar la salida del Día del Niño.</p>
+
+        <div class="section-label" style="margin-top:.8rem;">Escuelas a contactar</div>
+        <table class="mini-table">
+          <tr><th>Escuela</th><th>Zona</th><th>Cómo llegar</th></tr>
+          <tr><td>Colegio Ciudad de México (Roma Norte)</td><td>Puebla 419, Roma Norte</td><td>Ir en persona o llamar al plantel</td></tr>
+          <tr><td>Colegio México Roma (Maristas)</td><td>Roma</td><td>cmr.maristas.edu.mx</td></tr>
+          <tr><td>Colegio Alemán Humboldt</td><td>Polanco</td><td>Web oficial → contacto</td></tr>
+          <tr><td>Colegio Williams</td><td>Polanco</td><td>Web oficial → área cultural</td></tr>
+          <tr><td>Colegio Romera</td><td>Polanco</td><td>romera.edu.mx</td></tr>
+          <tr><td>Primarias delegacionales Roma Sur</td><td>Roma Sur / Narvarte</td><td>Visita directa al director</td></tr>
+        </table>
+
+        <div class="msg-box">
+          <div class="msg-box-header">
+            Mensaje para escuelas — WhatsApp / Email
+            <button class="copy-btn" onclick="copyMsg(this,'msg-escuela-kpop')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-escuela-kpop">Hola [Nombre], soy Gerard de Studio B.
+
+El 30 de abril y 2 de mayo presentamos GUERRERAS KPOP en el Teatro SME — un espectáculo profesional de danza y música kpop en vivo, especial para el Día del Niño.
+
+📅 Funciones: 17:00 y 18:45 hrs ambas fechas
+📍 Teatro SME, CDMX
+🎟 Grupo escolar: $100 por alumno (mínimo 20 niños)
+✅ Incluye: entrada + programa impreso + foto grupal con el elenco
+
+Los niños van a disfrutarlo muchísimo — es un show de danza profesional con artistas egresados del INBAL. Reserva tu grupo con solo el 50% de anticipo y el resto el día del evento.
+
+¿Les interesa apartar sus lugares? Disponibilidad limitada — las funciones del 30 de abril se están llenando.
+
++52 55 7860 0131 | @ensambleb_</div>
+        </div>
+
+        <div class="msg-box">
+          <div class="msg-box-header">
+            Email institucional (versión formal)
+            <button class="copy-btn" onclick="copyMsg(this,'msg-escuela-email')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-escuela-email">Asunto: Espectáculo Guerreras Kpop · Día del Niño · Grupo escolar con precio especial
+
+Estimado/a [Nombre]:
+
+Mi nombre es Gerard, director artístico de Studio B, productora escénica con sede en CDMX integrada por artistas egresados del INBAL.
+
+Con motivo del Día del Niño, presentamos GUERRERAS KPOP en el Teatro SME los días 30 de abril y 2 de mayo, con funciones a las 17:00 y 18:45 horas.
+
+Para grupos escolares ofrecemos precio especial de $100 por alumno (mínimo 20 niños), que incluye:
+· Entrada al espectáculo
+· Programa impreso del show
+· Foto grupal con el elenco al finalizar
+
+La reserva se confirma con el 50% de anticipo; el resto se liquida el día del evento.
+
+¿Podría comunicarme con el área de actividades culturales o extracurriculares para coordinar los detalles?
+
+Quedo a sus órdenes.
+
+Gerard | Director Artístico | Studio B
++52 55 7860 0131 | @ensambleb_ | studiob.mx</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="k4">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'k4')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">DM a 10 cuentas kpop en Instagram + propuesta de colaboración</div>
+        <div class="task-meta"><span class="badge badge-today">Día 1-2</span><span class="badge-who">Ayudante 2</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Los fan clubs kpop en CDMX tienen audiencias muy específicas y comprometidas. Un post de una cuenta con 15K seguidores kpop puede valer más que un anuncio pagado.</p>
+        <div class="info-box"><strong>Cómo encontrarlas:</strong> Instagram → buscar #kpopcdmx #kpopmexico #fankpopmexico. Las cuentas con más engagement (no solo seguidores) son las que importan.</div>
+
+        <div class="msg-box">
+          <div class="msg-box-header">
+            DM para fan clubs kpop
+            <button class="copy-btn" onclick="copyMsg(this,'msg-kpop-fanclub')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-kpop-fanclub">Hola! 👋 Somos Studio B, productora escénica en CDMX con artistas del INBAL.
+
+El 30 de abril y 2 de mayo presentamos GUERRERAS KPOP en el Teatro SME — un espectáculo de danza y música kpop profesional en vivo para el Día del Niño 🎤✨
+
+Nos encantaría colaborar contigo:
+✅ 2 entradas gratis para ti y quien quieras
+✅ Código de descuento del 15% para tu comunidad
+✅ Crédito en nuestras redes como colaborador oficial
+
+A cambio: 1 post en feed + 2 stories mencionando el evento antes del 25 de abril.
+
+¿Te interesa? Con gusto te mandamos más info y el flyer oficial 🙌</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="k5">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'k5')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Publicar en grupos de Facebook de mamás y familias CDMX</div>
+        <div class="task-meta"><span class="badge badge-today">Día 2</span><span class="badge-who">Ayudante 1</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Grupos target: "Mamás CDMX", "Qué hacer con niños en CDMX", "Planes para niños CDMX", "Actividades infantiles Ciudad de México". Buscar y unirse esta semana.</p>
+        <div class="msg-box">
+          <div class="msg-box-header">
+            Publicación para grupos de mamás
+            <button class="copy-btn" onclick="copyMsg(this,'msg-mamas')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-mamas">🎤 ¡El plan perfecto para el Día del Niño!
+
+GUERRERAS KPOP llega al Teatro SME el 30 de abril y 2 de mayo con un espectáculo de danza y música kpop profesional en vivo 🌟
+
+📅 Funciones: 17:00 y 18:45 hrs (ambas fechas)
+📍 Teatro SME, CDMX
+🎟 General: $150 · VIP: $250 · Familiar (4 personas): $500
+🏫 Grupos escolares: $100 por niño (mín. 20)
+
+Artistas egresados del INBAL. Show de alto nivel para toda la familia.
+
+Boletos: [LINK MERCADOPAGO]
+Info: +52 55 7860 0131 · @ensambleb_
+
+¡Capacidad limitada — asegura sus lugares! 💜</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="k6">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'k6')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Contactar tiendas kpop físicas en CDMX — alianza de venta</div>
+        <div class="task-meta"><span class="badge badge-week">Día 2-3</span><span class="badge-who">Ayudante 2</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Buscar en Instagram "tienda kpop CDMX" / "kpop store México". Las que tengan más de 2K seguidores y actividad reciente son candidatas. Propuesta: comisión del 10% por boleto vendido a través de su código.</p>
+        <div class="msg-box">
+          <div class="msg-box-header">
+            DM para tiendas kpop
+            <button class="copy-btn" onclick="copyMsg(this,'msg-tienda')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-tienda">Hola! Somos Studio B, productora escénica en CDMX.
+
+El 30 de abril y 2 de mayo presentamos GUERRERAS KPOP en el Teatro SME — show de danza y música kpop profesional en vivo para el Día del Niño.
+
+Nos gustaría proponerte una alianza:
+✅ Código de descuento exclusivo para tu comunidad (10% off)
+✅ 10% de comisión por cada boleto vendido con tu código
+✅ Mención de tu tienda en nuestras redes y en el programa del evento
+✅ 2 entradas cortesía para ti
+
+¿Te interesa? Sería una colaboración muy natural para tu comunidad 🎤
+
++52 55 7860 0131</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="k7">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'k7')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Publicación orgánica en Instagram y TikTok del elenco</div>
+        <div class="task-meta"><span class="badge badge-week">Día 3-5</span><span class="badge-who">Elenco</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Cada integrante del elenco publica en sus redes. Clip de ensayo + información del evento. TikTok con danza kpop tiene altísimo alcance orgánico.</p>
+        <div class="info-box"><strong>Formato ideal TikTok/Reels:</strong> 15–30 segundos de coreografía en ensayo → corte → texto "Guerreras Kpop · Teatro SME · 30 Abr" → link en bio. Sin música de fondo — el audio del ensayo es suficiente.</div>
+        <div class="msg-box">
+          <div class="msg-box-header">
+            Caption para Instagram
+            <button class="copy-btn" onclick="copyMsg(this,'msg-ig')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-ig">Este 30 de abril y 2 de mayo te esperamos en el Teatro SME 🎤
+
+GUERRERAS KPOP — Día del Niño
+Danza y música kpop en vivo. Artistas egresados del INBAL.
+4 funciones · 17:00 y 18:45 hrs
+
+🎟 Boletos en el link de la bio
+General $150 · VIP $250 · Grupos escolares $100
+
+¡No te quedes sin lugar! 💜✨
+
+#GuerrerasKpop #KpopCDMX #DiadelNino #StudioB #KpopMexico #TeatroSME #DanzaKpop #KpopEnVivo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="k8">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'k8')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Seguimiento a escuelas que no respondieron (día 3)</div>
+        <div class="task-meta"><span class="badge badge-week">Día 4-5</span><span class="badge-who">Ayudante 1</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <div class="msg-box">
+          <div class="msg-box-header">
+            Mensaje de seguimiento — escuelas
+            <button class="copy-btn" onclick="copyMsg(this,'msg-seguimiento-esc')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-seguimiento-esc">Hola [Nombre], solo quería confirmar que les llegó la información sobre Guerreras Kpop para el Día del Niño en el Teatro SME.
+
+Quedan pocos lugares disponibles para grupos escolares — la función de las 17:00 del 30 de abril está casi reservada.
+
+Si les interesa apartar aunque sea 20 lugares, lo podemos hacer hoy mismo con solo el 50% de anticipo. ¿Tienen 5 minutos para platicarlo?
+
++52 55 7860 0131</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="k9">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'k9')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Activar urgencia "últimos lugares" en redes y WhatsApp (día 10)</div>
+        <div class="task-meta"><span class="badge badge-week">Día 10</span><span class="badge-who">Gerard</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Independientemente de cuántos boletos se hayan vendido, activar el mensaje de urgencia 5 días antes del evento acelera las decisiones de compra pendientes.</p>
+        <div class="msg-box">
+          <div class="msg-box-header">
+            Mensaje de urgencia (WhatsApp broadcast)
+            <button class="copy-btn" onclick="copyMsg(this,'msg-urgencia')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-urgencia">🎤 GUERRERAS KPOP — faltan 5 días
+
+Teatro SME · 30 de abril y 2 de mayo
+Funciones: 17:00 y 18:45 hrs
+
+Quedan pocos lugares disponibles para la función del 30 de abril.
+
+🎟 Boletos: [LINK]
+General $150 · VIP $250 · Familiar $500
+
+Si estás pensándolo, es el momento de asegurar tu lugar.
+¡Nos vemos en el Teatro SME! 💜✨</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="k10">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'k10')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Logística del día: accesos, QR, foto con elenco, programa impreso</div>
+        <div class="task-meta"><span class="badge badge-week">Día 8-12</span><span class="badge-who">Ayudante 1</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <div class="subtasks">
+          <div class="subtask"><div class="subtask-dot"></div>Descargar lista de asistentes de Boletia antes de cada función</div>
+          <div class="subtask"><div class="subtask-dot"></div>Imprimir programas del show (1 por persona + 20% extra)</div>
+          <div class="subtask"><div class="subtask-dot"></div>Designar 1 persona en puerta para verificar QR / lista de grupos</div>
+          <div class="subtask"><div class="subtask-dot"></div>Zona de foto con elenco: 15 min post función, área detrás del escenario</div>
+          <div class="subtask"><div class="subtask-dot"></div>Tabla de acceso VIP: identificar asientos de primeras 3 filas</div>
+          <div class="subtask"><div class="subtask-dot"></div>Confirmación de grupos escolares: llamar 48 h antes para confirmar asistencia</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TAB 2: ESCUELAS
+═══════════════════════════════════════ -->
+<div id="tab-escuelas" class="section">
+  <div class="phase-intro">
+    <div>
+      <h2>Escuelas e Instituciones Educativas</h2>
+      <p>Canal de talleres, funciones y Demo-Conciertos. Ticket promedio $12,000–$45,000. Temporadas clave: abril–mayo y agosto–septiembre.</p>
+    </div>
+    <div class="phase-badge"><div class="phase-badge-label">Ticket promedio</div><div class="phase-badge-val">$18,000</div></div>
+  </div>
+
+  <div class="tasks" id="tasks-escuelas">
+
+    <div class="task-card urgent" data-id="e1">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'e1')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Primer contacto: Colegio Ciudad de México — Roma Norte (Puebla 419)</div>
+        <div class="task-meta"><span class="badge badge-urgent">HOY</span><span class="badge-who">Gerard</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Están a 10 minutos de Coahuila 184. Ya tienen programa cultural activo con 50+ actividades extracurriculares. El contacto ideal es el coordinador de actividades culturales.</p>
+        <div class="info-box"><strong>Estrategia:</strong> Ofrece primero el Demo-Concierto + Taller para este semestre ($12,000–$20,000) y al cerrar, propón el taller semestral como continuidad. No ofrezcas todo de golpe.</div>
+        <div class="msg-box">
+          <div class="msg-box-header">Email inicial — escuelas (servicios generales)
+            <button class="copy-btn" onclick="copyMsg(this,'msg-escuela-gen')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-escuela-gen">Asunto: Talleres artísticos y funciones para [nombre institución] — Studio B
+
+Estimado/a [Nombre]:
+
+Mi nombre es Gerard y dirijo Studio B, productora escénica en CDMX integrada por artistas egresados del INBAL.
+
+Trabajamos con instituciones educativas en dos formatos:
+
+TALLERES: Teatro, canto, danza, música, cine, expresión corporal y LSM aplicada al arte. Desde $3,500 por sesión o $18,000 el curso completo (4–8 sesiones, grupos hasta 30 alumnos).
+
+FUNCIONES: Espectáculos profesionales para días culturales:
+· Demo-Concierto + taller participativo: $12,000–$20,000 (hasta 60 alumnos, 80 min)
+· Un Viaje En-Cantador (FONCA, con LSM): desde $38,000
+· Luces de Broadway (20+ intérpretes): desde $38,000
+
+¿Podría comunicarme con el área de actividades culturales para explorar una fecha en su calendario?
+
+Quedo a sus órdenes.
+Gerard | Studio B | +52 55 7860 0131 | @ensambleb_</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="e2">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'e2')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Contactar Colegio México Roma, Colegio Romera y Colegio Williams</div>
+        <div class="task-meta"><span class="badge badge-today">Día 1-2</span><span class="badge-who">Ayudante 1</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Tres colegios de perfil diferente. México Roma tiene enfoque en valores e inclusión — ideal para Un Viaje En-Cantador (LSM). Williams y Romera son más propensos a talleres creativos.</p>
+        <div class="info-box"><strong>Para Colegio México Roma:</strong> Menciona específicamente que Un Viaje En-Cantador tiene Lengua de Señas Mexicana — es su diferenciador y encaja perfecto con su enfoque de inclusión.</div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="e3">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'e3')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Contactar Universidad Iberoamericana y UNAM — Difusión Cultural</div>
+        <div class="task-meta"><span class="badge badge-week">Semana 2</span><span class="badge-who">Gerard</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Las universidades tienen programas de difusión cultural con presupuesto propio. El aval de FONCA en Un Viaje En-Cantador es clave para UNAM — es exactamente el tipo de proyecto que programan.</p>
+        <div class="msg-box">
+          <div class="msg-box-header">Email para universidades
+            <button class="copy-btn" onclick="copyMsg(this,'msg-univ')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-univ">Asunto: Propuesta de programación cultural — Studio B · FONCA · INBAL
+
+Estimado/a equipo de Difusión Cultural:
+
+Studio B es una productora escénica integrada por egresados del INBAL con trayectoria en los principales escenarios de México (Bellas Artes, Teatro de la Ciudad, Sala Nezahualcóyotl).
+
+Tenemos disponibles para programación universitaria tres producciones con carpeta completa:
+
+· CONFESIONES DE ÓPERA — Ópera + canción latinoamericana · ~80 min · Desde $25,000
+· UN VIAJE EN-CANTADOR — Teatro musical + LSM · Respaldada por FONCA · ~75 min · Desde $38,000
+· LUCES DE BROADWAY — 20+ intérpretes, 2 pianos, arpa · ~90 min · Desde $38,000
+
+Las tres cuentan con ficha técnica, video y registros de funciones anteriores.
+
+¿Podríamos agendar una llamada o enviarles la carpeta de la producción de mayor interés?
+
+Gerard | Director Artístico | Studio B
++52 55 7860 0131 | @ensambleb_</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="e4">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'e4')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Proponer Programa Semestral a las escuelas que respondan positivo</div>
+        <div class="task-meta"><span class="badge badge-week">Semana 2-3</span><span class="badge-who">Gerard</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Cuando una escuela dice que sí a un taller o función, ese mismo momento es para proponer el programa semestral. No esperes a la segunda reunión.</p>
+        <div class="msg-box">
+          <div class="msg-box-header">Propuesta de programa semestral
+            <button class="copy-btn" onclick="copyMsg(this,'msg-semestral')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-semestral">Qué bueno que les interesa. Mientras coordinamos esa primera fecha, quería comentarles también la opción de un programa semestral.
+
+En lugar de contratarlo por sesión, muchas escuelas prefieren cerrar el semestre completo porque:
+
+· Precio total más conveniente: programa semestral desde $45,000 (equivale a ~$3,750 por semana de taller profesional)
+· 1 función de fin de ciclo incluida — el cierre del semestre con presentación para los papás
+· Acceso al Demo-Concierto para cualquier grupo del plantel durante el semestre
+· Un solo contrato, sin trámites adicionales por cada sesión
+
+¿Les gustaría que les mandara la propuesta formal? La pueden revisar sin compromiso.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TAB 3: EMPRESAS
+═══════════════════════════════════════ -->
+<div id="tab-empresas" class="section">
+  <div class="phase-intro">
+    <div>
+      <h2>Empresas · Eventos Corporativos</h2>
+      <p>Shows, galas, talleres de team building y programas anuales. Ticket promedio $20,000–$55,000. Fechas clave: fin de año (nov–dic), aniversarios, convenciones.</p>
+    </div>
+    <div class="phase-badge"><div class="phase-badge-label">Ticket promedio</div><div class="phase-badge-val">$28,000</div></div>
+  </div>
+
+  <div class="tasks" id="tasks-empresas">
+
+    <div class="task-card urgent" data-id="em1">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'em1')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">LinkedIn: identificar coordinadores de RH en BBVA, Santander, Heineken, L'Oréal</div>
+        <div class="task-meta"><span class="badge badge-today">Día 1-2</span><span class="badge-who">Ayudante 2</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Buscar en LinkedIn: "Coordinador de Eventos" OR "Gerente de Recursos Humanos" + nombre de empresa + "Ciudad de México". Guardar perfil + buscar email o WhatsApp en su perfil público.</p>
+        <div class="info-box"><strong>Cargo ideal a buscar:</strong> "Coordinador de Bienestar", "Gerente de Cultura Organizacional", "Coordinador de Eventos Internos", "Business Partner RH". Estos son quienes aprueban proveedores de entretenimiento.</div>
+
+        <div class="msg-box">
+          <div class="msg-box-header">Mensaje de LinkedIn (conexión + propuesta)
+            <button class="copy-btn" onclick="copyMsg(this,'msg-linkedin')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-linkedin">Hola [Nombre], soy Gerard, director artístico de Studio B en CDMX.
+
+Somos una productora escénica con artistas egresados del INBAL — música en vivo, danza, teatro y talleres creativos para eventos corporativos.
+
+Trabajo con empresas como [nombre de empresa similar al sector] en shows de fin de año, galas, convenciones y programas de bienestar para equipos. Tenemos desde un cóctel musical ($10,000) hasta Luces de Broadway con 20+ intérpretes.
+
+¿Tienen eventos planeados para el segundo semestre donde les pueda ser útil? Con gusto les comparto el catálogo.
+
++52 55 7860 0131 | studiob.mx</div>
+        </div>
+
+        <div class="msg-box">
+          <div class="msg-box-header">WhatsApp corporativo (si consigues número directo)
+            <button class="copy-btn" onclick="copyMsg(this,'msg-wa-corp')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-wa-corp">Hola [Nombre], soy Gerard de Studio B CDMX. Somos una productora escénica con artistas egresados del INBAL — música, danza y teatro de nivel institucional para eventos corporativos.
+
+Para empresas tenemos desde cócteles musicales ($10,000) hasta espectáculos de Broadway con 20+ intérpretes, talleres de team building y programas anuales con descuento.
+
+¿Tienen eventos este semestre donde les pueda ayudar? Te comparto el catálogo completo con gusto. 🎭</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="em2">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'em2')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Contactar agencias de eventos como aliados estratégicos (no clientes directos)</div>
+        <div class="task-meta"><span class="badge badge-week">Semana 1-2</span><span class="badge-who">Gerard</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Una agencia aliada puede traerte 3–5 contratos al año sin que tú salgas a buscarlos. La propuesta es ser su proveedor artístico de confianza.</p>
+        <div class="msg-box">
+          <div class="msg-box-header">Mensaje para agencias de eventos
+            <button class="copy-btn" onclick="copyMsg(this,'msg-agencia')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-agencia">Hola [Nombre], soy Gerard de Studio B.
+
+Somos una productora escénica con artistas del INBAL — música en vivo, danza, teatro y talleres creativos para eventos corporativos y sociales en CDMX.
+
+No busco competir con tu agencia sino ser su proveedor artístico de confianza. Cuando tengan un cliente que necesite entretenimiento de nivel institucional — gala, show de fin de año, apertura de convención, team building creativo — podemos ser el elemento diferenciador que elevan la propuesta.
+
+Tenemos catálogo completo con precios, fichas técnicas y videos de referencia. ¿Les interesa conocernos? Puedo ir a su oficina o hacer una llamada de 20 minutos.
+
++52 55 7860 0131 | @ensambleb_</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="em3">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'em3')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Proponer Programa Anual a empresas interesadas</div>
+        <div class="task-meta"><span class="badge badge-week">Semana 2-3</span><span class="badge-who">Gerard</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <div class="msg-box">
+          <div class="msg-box-header">Propuesta de Programa Anual Studio B
+            <button class="copy-btn" onclick="copyMsg(this,'msg-anual')">Copiar</button>
+          </div>
+          <div class="msg-box-body" id="msg-anual">Ya que les interesa nuestro catálogo, quería compartirles también nuestra opción de Programa Anual, que muchas empresas prefieren porque simplifica la planeación de todo el año.
+
+PROGRAMA ANUAL STUDIO B 2026
+Para empresas con 2 o más eventos en el año:
+
+✅ 4 servicios a elegir libremente durante 2026 (de cualquier categoría del catálogo)
+✅ 20% de descuento sobre precio de lista en todos los servicios
+✅ Prioridad en agenda — sus fechas quedan reservadas
+✅ Taller de team building de 2 horas de cortesía (valor $7,000)
+✅ Un solo contrato, un solo punto de contacto para todo el año
+
+Forma de pago: anticipo del 30% para activar + 3 pagos trimestrales. O pago total con 5% adicional de descuento.
+
+Ejemplo: 4 servicios a $20,000 promedio = $80,000 lista. Con programa anual: $64,000 + taller de regalo.
+
+¿Les mando la propuesta formal para que la revisen?</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TAB 4: RESPUESTAS
+═══════════════════════════════════════ -->
+<div id="tab-respuestas" class="section">
+  <div class="phase-intro">
+    <div>
+      <h2>Sistema de Respuestas y Objeciones</h2>
+      <p>Respuestas listas para los escenarios más comunes. Copiar, personalizar con el nombre del cliente y enviar. Sin improvisar.</p>
+    </div>
+  </div>
+
+  <div class="tasks" id="tasks-respuestas">
+
+    <div class="task-card" data-id="r1">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'r1')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Respuesta: "¿Cuánto cuesta?"</div>
+        <div class="task-meta"><span class="badge badge-ongoing">Siempre activo</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <div class="msg-box">
+          <div class="msg-box-header">Respuesta<button class="copy-btn" onclick="copyMsg(this,'r-precio')">Copiar</button></div>
+          <div class="msg-box-body" id="r-precio">Depende del formato y el número de personas. Como referencia rápida:
+
+· Cóctel musical (1–2 cantantes + piano): desde $10,000
+· Show de danza o jazz: desde $12,000
+· Gala operística o cuarteto vocal: desde $18,000
+· Espectáculo completo de Broadway: desde $28,000
+· Talleres: desde $3,500 por sesión
+
+Para darte un precio exacto necesito saber: ¿qué tipo de evento es, cuántas personas y en qué fecha? Con eso te mando una cotización en menos de 24 horas.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="r2">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'r2')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Respuesta: "Es muy caro"</div>
+        <div class="task-meta"><span class="badge badge-ongoing">Siempre activo</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <div class="msg-box">
+          <div class="msg-box-header">Respuesta<button class="copy-btn" onclick="copyMsg(this,'r-caro')">Copiar</button></div>
+          <div class="msg-box-body" id="r-caro">Entiendo perfectamente — los presupuestos tienen sus límites y quiero que encuentren algo que funcione para ustedes.
+
+Tenemos formatos desde sesiones de taller a $3,500 hasta producciones completas. Si me dices con qué presupuesto cuentan, les armo una propuesta ajustada a ese número. Siempre hay una forma de hacer que funcione.
+
+¿Cuánto tienen contemplado para este evento?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="r3">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'r3')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Respuesta: "Lo consultamos internamente"</div>
+        <div class="task-meta"><span class="badge badge-ongoing">Siempre activo</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <div class="msg-box">
+          <div class="msg-box-header">Respuesta<button class="copy-btn" onclick="copyMsg(this,'r-consultar')">Copiar</button></div>
+          <div class="msg-box-body" id="r-consultar">Perfecto, con todo el gusto. ¿Con quién lo consultan? Si me ayuda, puedo prepararles algo más formal — una propuesta en PDF con todos los detalles, precios y referencias — para que sea más fácil presentarlo internamente.
+
+¿Cuándo creen que tendrán una respuesta? Así me organizo con la agenda de disponibilidad.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="r4">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'r4')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Respuesta: No contesta (día 3 sin respuesta)</div>
+        <div class="task-meta"><span class="badge badge-ongoing">Siempre activo</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <div class="msg-box">
+          <div class="msg-box-header">Toque 2 — reactivación suave<button class="copy-btn" onclick="copyMsg(this,'r-silencio')">Copiar</button></div>
+          <div class="msg-box-body" id="r-silencio">Hola [Nombre], solo quería asegurarme de que les llegó la información. ¿Tuvieron oportunidad de verla?
+
+Si no es el momento, no hay problema — con gusto los contacto cuando sea más oportuno. Y si tienen preguntas, con toda confianza.</div>
+        </div>
+        <div class="msg-box">
+          <div class="msg-box-header">Toque 3 — día 7, con novedad<button class="copy-btn" onclick="copyMsg(this,'r-silencio2')">Copiar</button></div>
+          <div class="msg-box-body" id="r-silencio2">Hola [Nombre], quería compartirles una novedad: estamos cerrando agenda para mayo y junio, y tenemos una promo vigente hasta el 30 de abril — 10% de descuento en cualquier servicio para quien confirme este mes.
+
+Por si les sirve para este semestre. Cualquier pregunta aquí estoy.</div>
+        </div>
+        <div class="msg-box">
+          <div class="msg-box-header">Toque 4 — día 14, cierre definitivo<button class="copy-btn" onclick="copyMsg(this,'r-silencio3')">Copiar</button></div>
+          <div class="msg-box-body" id="r-silencio3">Hola [Nombre], este será mi último mensaje para no saturarlos. Si en algún momento tienen un evento donde podamos ser de ayuda, aquí estaré.
+
+¡Mucho éxito en sus proyectos!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="r5">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'r5')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Respuesta: "No tenemos presupuesto ahora"</div>
+        <div class="task-meta"><span class="badge badge-ongoing">Siempre activo</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <div class="msg-box">
+          <div class="msg-box-header">Respuesta<button class="copy-btn" onclick="copyMsg(this,'r-presup')">Copiar</button></div>
+          <div class="msg-box-body" id="r-presup">Totalmente entendido, los presupuestos tienen sus tiempos. ¿Cuándo sería un mejor momento para retomar — el siguiente trimestre, para el segundo semestre?
+
+Lo agendo y mientras tanto les dejo el catálogo como referencia. A veces aparecen fechas de improviso y es bueno ya tener el contacto. 😊</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="r6">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'r6')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Respuesta: "Ya tenemos proveedor de entretenimiento"</div>
+        <div class="task-meta"><span class="badge badge-ongoing">Siempre activo</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <div class="msg-box">
+          <div class="msg-box-header">Respuesta<button class="copy-btn" onclick="copyMsg(this,'r-proveedor')">Copiar</button></div>
+          <div class="msg-box-body" id="r-proveedor">Qué bueno que ya tienen uno — eso significa que valoran la calidad en sus eventos.
+
+Lo que hacemos nosotros es bastante específico: artistas con formación del INBAL, producciones con aval de FONCA, y la posibilidad de integrar música, danza y teatro en un solo show. En muchos casos somos complementarios, no sustitutos.
+
+¿Les incomoda que les comparta el catálogo? Solo para tenerlo como referencia por si en algún evento necesitan algo diferente.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="r7">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'r7')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Respuesta: Cliente interesado — siguiente paso</div>
+        <div class="task-meta"><span class="badge badge-ongoing">Siempre activo</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <div class="msg-box">
+          <div class="msg-box-header">Respuesta cuando dicen "sí, me interesa"<button class="copy-btn" onclick="copyMsg(this,'r-interesado')">Copiar</button></div>
+          <div class="msg-box-body" id="r-interesado">¡Qué bueno! Para armarles la propuesta exacta necesito tres datos:
+
+1. ¿Qué tipo de evento es (cena, convención, día del empleado, etc.)?
+2. ¿Cuántas personas aproximadamente?
+3. ¿En qué fecha o rango de fechas lo tienen en mente?
+
+Con eso les tengo una cotización formal en menos de 24 horas. 🎭</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TAB 5: CRM & MÉTRICAS
+═══════════════════════════════════════ -->
+<div id="tab-crm" class="section">
+  <div class="phase-intro">
+    <div>
+      <h2>CRM · Métricas Semanales</h2>
+      <p>Estructura del archivo Google Sheets y revisión semanal de 15 minutos para saber si el sistema está funcionando.</p>
+    </div>
+  </div>
+
+  <div class="tasks" id="tasks-crm">
+
+    <div class="task-card urgent" data-id="c1">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'c1')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Crear el archivo CRM Studio B 2026 en Google Sheets</div>
+        <div class="task-meta"><span class="badge badge-urgent">HOY</span><span class="badge-who">Ayudante 1</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Crear un Google Sheets compartido con todo el equipo. 5 pestañas. Compartir con permiso de edición para ayudantes y solo lectura para los demás.</p>
+        <div class="section-label">Pestaña 1 — Pipeline de ventas</div>
+        <div class="info-box">Columnas: <strong>ID · Nombre/Empresa · Segmento · Contacto · WhatsApp · Email · Producto · Precio estimado · Etapa · Fecha primer contacto · Fecha último contacto · Próxima acción · Fecha próxima acción · Notas</strong></div>
+        <div class="info-box">Etapas con color: 🔵 Prospecto → 🟡 Contactado → 🟠 Interesado → 🔴 Propuesta enviada → 🟢 Cerrado → ⚫ Descartado</div>
+
+        <div class="section-label">Pestaña 2 — Historial de contactos</div>
+        <div class="info-box">Columnas: <strong>ID cliente · Fecha · Toque # · Canal · Resumen del mensaje · Respuesta recibida · Siguiente paso</strong></div>
+
+        <div class="section-label">Pestaña 3 — Métricas semanales</div>
+        <div class="info-box">Columnas: <strong>Semana · Prospectos nuevos · Mensajes enviados · Respuestas · Propuestas · Cierres · Ingresos $MXN · Tasa de respuesta % · Tasa de cierre %</strong></div>
+
+        <div class="section-label">Pestaña 4 — Agenda de seguimientos</div>
+        <div class="info-box">Columnas: <strong>Fecha · ID cliente · Nombre · Toque # · Canal · Acción · Hecho ✓</strong> — Ordenar por fecha. Esta es la lista de trabajo diario del equipo.</div>
+
+        <div class="section-label">Pestaña 5 — Catálogo con precios</div>
+        <div class="info-box">Todos los productos de Studio B con precio mínimo, máximo, segmento ideal y notas. Ya está listado completo en la guía de ventas.</div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="c2">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'c2')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Cargar los 30 prospectos iniciales en el CRM esta semana</div>
+        <div class="task-meta"><span class="badge badge-week">Semana 1</span><span class="badge-who">Ayudante 1</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Los 30 prospectos de las listas ya están definidos: 10 empresas, 12 escuelas, 5 foros/aliados, 3 agencias de eventos. Cargarlos todos en el Pipeline con etapa "🔵 Prospecto".</p>
+        <div class="subtasks">
+          <div class="subtask"><div class="subtask-dot"></div>10 empresas: BBVA, Santander, Heineken, L'Oréal, Amazon, Oracle, Televisa, Cemex, HSBC, Grupo Bimbo</div>
+          <div class="subtask"><div class="subtask-dot"></div>12 escuelas: CCM Roma, CCM Polanco, Colegio México Roma, Humboldt, Williams, Romera, Iberoamericana, UNAM Difusión, Anáhuac Norte, Prepa Ibero + 2 primarias delegacionales</div>
+          <div class="subtask"><div class="subtask-dot"></div>3 agencias aliadas: Hughes Events, InfoSol, Grupo Cassatt</div>
+          <div class="subtask"><div class="subtask-dot"></div>5 canales kpop: Fan clubs Instagram, tiendas kpop, grupos Facebook mamás</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="c3">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'c3')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Revisión semanal de métricas — cada lunes, 15 minutos</div>
+        <div class="task-meta"><span class="badge badge-ongoing">Cada lunes</span><span class="badge-who">Gerard</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">La revisión semanal es para tomar decisiones, no solo para ver números. 3 preguntas clave:</p>
+        <div class="subtasks">
+          <div class="subtask"><div class="subtask-dot"></div><strong>¿Tasa de respuesta menor al 20%?</strong> → Cambiar el mensaje de primer contacto</div>
+          <div class="subtask"><div class="subtask-dot"></div><strong>¿Muchos interesados pero pocos cierres?</strong> → Revisar la propuesta o el precio</div>
+          <div class="subtask"><div class="subtask-dot"></div><strong>¿Un segmento responde mejor que otros?</strong> → Duplicar esfuerzo en ese segmento</div>
+        </div>
+        <table class="mini-table" style="margin-top:.8rem;">
+          <tr><th>Métrica</th><th>Objetivo semanal</th><th>Señal de alerta</th></tr>
+          <tr><td>Mensajes enviados</td><td>15–20</td><td>Menos de 10</td></tr>
+          <tr><td>Tasa de respuesta</td><td>25–35%</td><td>Menos de 15%</td></tr>
+          <tr><td>Propuestas enviadas</td><td>3–5</td><td>0–1</td></tr>
+          <tr><td>Cierres al mes</td><td>2–3</td><td>0</td></tr>
+          <tr><td>Ingresos confirmados</td><td>$40,000+/mes</td><td>Menos de $20,000</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="task-card" data-id="c4">
+      <div class="task-header" onclick="toggleTask(this)">
+        <div class="task-check" onclick="checkTask(event,'c4')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="task-title">Configurar secuencia automática de WhatsApp post-consulta</div>
+        <div class="task-meta"><span class="badge badge-week">Semana 1-2</span><span class="badge-who">Ayudante 2</span></div>
+        <button class="expand-btn">▾</button>
+      </div>
+      <div class="task-body">
+        <p class="task-desc">Cuando alguien escribe preguntando por servicios, estos 3 mensajes van en secuencia. No automáticos como un bot — son mensajes que el ayudante envía manualmente en el momento indicado.</p>
+        <div class="msg-box">
+          <div class="msg-box-header">Mensaje 1 — Inmediato (mismo día)<button class="copy-btn" onclick="copyMsg(this,'seq1')">Copiar</button></div>
+          <div class="msg-box-body" id="seq1">Hola [Nombre], gracias por escribirnos. Aquí va nuestro catálogo completo con todos los servicios disponibles para 2026:
+
+[LINK A SITIO WEB / CATÁLOGO EN PDF]
+
+Somos una productora escénica con artistas egresados del INBAL — música, danza y teatro para cualquier tipo de evento. Cualquier duda con gusto te atiendo.
+
++52 55 7860 0131 | @ensambleb_</div>
+        </div>
+        <div class="msg-box">
+          <div class="msg-box-header">Mensaje 2 — Día siguiente<button class="copy-btn" onclick="copyMsg(this,'seq2')">Copiar</button></div>
+          <div class="msg-box-body" id="seq2">Por cierto, te comparto algunas reseñas de eventos recientes. Hemos trabajado con empresas, escuelas e instituciones culturales de CDMX — siempre con artistas de formación profesional.
+
+[FOTO / VIDEO DE EVENTO]
+
+¿Algo de lo que viste en el catálogo encaja con lo que buscan?</div>
+        </div>
+        <div class="msg-box">
+          <div class="msg-box-header">Mensaje 3 — Día 5<button class="copy-btn" onclick="copyMsg(this,'seq3')">Copiar</button></div>
+          <div class="msg-box-body" id="seq3">Esta semana tenemos disponibilidad para cerrar fechas de mayo y junio. Hay una promo vigente hasta el 30 de abril — 10% de descuento en cualquier servicio para quien confirme este mes.
+
+¿Les cuento los detalles? 🎭</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- .main -->
+
+<script>
+// ── STATE ──
+const state = JSON.parse(localStorage.getItem('sb-state') || '{}');
+
+function saveState() {
+  localStorage.setItem('sb-state', JSON.stringify(state));
+}
+
+// ── TABS ──
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+  updateStats();
+}
+
+// ── TOGGLE EXPAND ──
+function toggleTask(header) {
+  const card = header.closest('.task-card');
+  card.classList.toggle('open');
+}
+
+// ── CHECK TASK ──
+function checkTask(e, id) {
+  e.stopPropagation();
+  const card = document.querySelector('[data-id="' + id + '"]');
+  const isDone = card.classList.toggle('done');
+  state[id] = isDone;
+  saveState();
+  updateStats();
+}
+
+// ── STATS ──
+function updateStats() {
+  const allCards = document.querySelectorAll('.task-card[data-id]');
+  const total = allCards.length;
+  let done = 0;
+  allCards.forEach(c => { if (c.classList.contains('done')) done++; });
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-pending').textContent = total - done;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ── COPY MESSAGE ──
+function copyMsg(btn, id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── RESTORE STATE ──
+function restoreState() {
+  Object.keys(state).forEach(id => {
+    if (state[id]) {
+      const card = document.querySelector('[data-id="' + id + '"]');
+      if (card) card.classList.add('done');
+    }
+  });
+  updateStats();
+}
+
+restoreState();
+</script>
+</body>
+</html>
