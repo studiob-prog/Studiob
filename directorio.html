@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Directorio de Contactos · Studio B</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink:#FF2D78; --cyan:#00F5FF; --yellow:#FFE600; --green:#4ADE80;
+  --deep:#08001A; --card:#0E0022; --muted:#8B7AAA; --text:#F0E6FF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--deep);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 10% 0%,rgba(255,45,120,.12) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 40% at 90% 100%,rgba(0,245,255,.07) 0%,transparent 60%);}
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 18px 80px;}
+
+/* HERO */
+.hero{text-align:center;padding:44px 0 36px;border-bottom:1px solid rgba(255,45,120,.15);margin-bottom:36px;}
+.eyebrow{display:inline-block;background:var(–pink);color:#fff;font-family:‘Space Mono’,monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:4px 14px;border-radius:2px;margin-bottom:16px;box-shadow:0 0 20px rgba(255,45,120,.5);}
+h1{font-family:‘Bebas Neue’,sans-serif;font-size:clamp(36px,9vw,72px);letter-spacing:5px;color:#fff;line-height:1;text-shadow:0 0 30px rgba(255,45,120,.4);}
+h1 span{color:var(–cyan);text-shadow:0 0 20px rgba(0,245,255,.6);}
+.hero-sub{font-family:‘Space Mono’,monospace;font-size:11px;letter-spacing:3px;color:var(–muted);text-transform:uppercase;margin-top:10px;}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:28px;}
+.search-input{width:100%;background:rgba(14,0,34,.9);border:1px solid rgba(255,45,120,.25);border-radius:10px;padding:13px 18px 13px 46px;color:var(–text);font-size:14px;font-family:‘Noto Sans KR’,sans-serif;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:var(–pink);}
+.search-input::placeholder{color:var(–muted);}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(–muted);font-size:16px;}
+
+/* TABS */
+.tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.tab{font-family:‘Space Mono’,monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(–muted);cursor:pointer;transition:all .2s;}
+.tab:hover{border-color:rgba(255,45,120,.4);color:var(–text);}
+.tab.active{background:var(–pink);border-color:var(–pink);color:#fff;box-shadow:0 0 15px rgba(255,45,120,.4);}
+
+/* CATEGORY HEADER */
+.cat-header{display:flex;align-items:center;gap:12px;margin:32px 0 16px;}
+.cat-icon{font-size:22px;}
+.cat-title{font-family:‘Bebas Neue’,sans-serif;font-size:26px;letter-spacing:3px;color:#fff;}
+.cat-count{font-family:‘Space Mono’,monospace;font-size:10px;color:var(–muted);letter-spacing:2px;margin-left:auto;}
+
+/* CONTACT CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:8px;}
+.card{background:var(–card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;}
+.card::before{content:’’;position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0;}
+.card:hover{border-color:rgba(255,45,120,.3);transform:translateY(-2px);}
+.card.hotel::before{background:linear-gradient(90deg,#FFE600,#FF8C00);}
+.card.gobierno::before{background:linear-gradient(90deg,#4ADE80,#00F5FF);}
+.card.empresa::before{background:linear-gradient(90deg,#A78BFA,#FF2D78);}
+.card.escuela::before{background:linear-gradient(90deg,#00F5FF,#4ADE80);}
+.card.circo::before{background:linear-gradient(90deg,#FF2D78,#FFE600);}
+.card.festival::before{background:linear-gradient(90deg,#FF8C00,#FF2D78);}
+
+.card-tag{display:inline-block;font-family:‘Space Mono’,monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:10px;}
+.tag-hotel{background:rgba(255,230,0,.1);color:#FFB800;border:1px solid rgba(255,230,0,.3);}
+.tag-gobierno{background:rgba(74,222,128,.1);color:var(–green);border:1px solid rgba(74,222,128,.3);}
+.tag-empresa{background:rgba(167,139,250,.1);color:#A78BFA;border:1px solid rgba(167,139,250,.3);}
+.tag-escuela{background:rgba(0,245,255,.1);color:var(–cyan);border:1px solid rgba(0,245,255,.3);}
+.tag-circo{background:rgba(255,45,120,.1);color:var(–pink);border:1px solid rgba(255,45,120,.3);}
+.tag-festival{background:rgba(255,140,0,.1);color:#FF8C00;border:1px solid rgba(255,140,0,.3);}
+
+.card-name{font-family:‘Bebas Neue’,sans-serif;font-size:20px;letter-spacing:2px;color:#fff;margin-bottom:4px;line-height:1.1;}
+.card-area{font-size:12px;color:var(–muted);margin-bottom:12px;}
+.contact-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(–text);margin-bottom:6px;line-height:1.5;}
+.contact-row:last-child{margin-bottom:0;}
+.contact-ico{color:var(–muted);flex-shrink:0;margin-top:1px;}
+.contact-row a{color:var(–cyan);text-decoration:none;}
+.contact-row a:hover{text-decoration:underline;}
+.card-note{font-size:11px;color:var(–muted);font-style:italic;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);}
+
+/* ACCION CARD */
+.action-card{background:linear-gradient(135deg,rgba(255,45,120,.1),rgba(0,245,255,.05));border:1px solid rgba(255,45,120,.25);border-radius:12px;padding:20px 24px;margin:32px 0 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.action-card .ac-icon{font-size:32px;}
+.action-card .ac-text{flex:1;}
+.action-card .ac-title{font-family:‘Bebas Neue’,sans-serif;font-size:18px;letter-spacing:2px;color:#fff;margin-bottom:4px;}
+.action-card .ac-desc{font-size:12px;color:var(–muted);line-height:1.6;}
+
+/* HIDDEN */
+.cat-block{transition:opacity .3s;}
+.cat-block.hidden{display:none;}
+.card.hidden{display:none;}
+
+/* DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,45,120,.2),transparent);margin:36px 0;}
+
+/* FOOTER */
+.footer{text-align:center;padding:24px 0;font-family:‘Space Mono’,monospace;font-size:10px;letter-spacing:2px;color:var(–muted);border-top:1px solid rgba(255,255,255,.05);}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+
+<div class="hero">
+  <div class="eyebrow">✦ Studio B · Guerreras K-pop ✦</div>
+  <h1>DIRECTORIO<br>DE <span>CONTACTOS</span></h1>
+  <div class="hero-sub">Hoteles · Gobierno · Empresas · Escuelas · Circos · Festivales</div>
+</div>
+
+<!-- SEARCH -->
+
+<div class="search-wrap">
+  <span class="search-icon">🔍</span>
+  <input type="text" class="search-input" id="search" placeholder="Buscar por nombre, área o teléfono..." oninput="filterCards()">
+</div>
+
+<!-- TABS -->
+
+<div class="tabs">
+  <button class="tab active" onclick="filterTab('all',this)">Todos</button>
+  <button class="tab" onclick="filterTab('hotel',this)">🏨 Hoteles</button>
+  <button class="tab" onclick="filterTab('gobierno',this)">🏛️ Gobierno</button>
+  <button class="tab" onclick="filterTab('empresa',this)">🏢 Empresas</button>
+  <button class="tab" onclick="filterTab('escuela',this)">🏫 Escuelas</button>
+  <button class="tab" onclick="filterTab('circo',this)">🎪 Circos/Parques</button>
+  <button class="tab" onclick="filterTab('festival',this)">🎡 Festivales</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HOTELES
+════════════════════════════════════════════ -->
+
+<div class="cat-block" id="cat-hotel">
+  <div class="cat-header">
+    <span class="cat-icon">🏨</span>
+    <span class="cat-title">Hoteles</span>
+    <span class="cat-count">Pide al depto. de Banquetes & Eventos</span>
+  </div>
+  <div class="cards-grid">
+
+```
+<div class="card hotel" data-cat="hotel" data-text="NH Valle Dorado Tlalnepantla banquetes eventos">
+  <span class="card-tag tag-hotel">Hotel 4★ · Cercano</span>
+  <div class="card-name">NH MEXICO CITY VALLE DORADO</div>
+  <div class="card-area">Tlalnepantla · Periferia Norte CDMX</div>
+  <div class="contact-row"><span class="contact-ico">📍</span>Blvd. Manuel Ávila Camacho 3130, Valle Dorado, Tlalnepantla</div>
+  <div class="contact-row"><span class="contact-ico">📞</span>55 1940-3770</div>
+  <div class="contact-row"><span class="contact-ico">✉️</span><a href="mailto:nhvalledorado@nh-hotels.com">nhvalledorado@nh-hotels.com</a></div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.nh-hotels.com/es/hotel/nh-mexico-city-valle-dorado/reuniones-eventos" target="_blank">Página de eventos</a></div>
+  <div class="card-note">Banquete + 5 salones. Pide hablar con el Coordinador de Eventos. Muy cerca de Studio B Atizapán.</div>
+</div>
+
+<div class="card hotel" data-cat="hotel" data-text="Hotel Atizapán eventos reuniones">
+  <span class="card-tag tag-hotel">Hotel · Atizapán</span>
+  <div class="card-name">HOTEL & VILLAS ATIZAPÁN</div>
+  <div class="card-area">Atizapán de Zaragoza, Edo. Méx.</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://hotelatizapan.com.mx" target="_blank">hotelatizapan.com.mx</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Contacto vía web o llamada directa al hotel</div>
+  <div class="card-note">Salones para eventos corporativos y sociales. Ideal para funciones en tu misma zona.</div>
+</div>
+
+<div class="card hotel" data-cat="hotel" data-text="Camino Real Polanco banquetes entretenimiento eventos">
+  <span class="card-tag tag-hotel">Hotel 5★ · Polanco</span>
+  <div class="card-name">CAMINO REAL POLANCO</div>
+  <div class="card-area">Polanco, CDMX · Hasta 1,300 personas</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.grupocaminoreal.com/camino-real-polanco-mexico/reuniones-y-eventos" target="_blank">Página de eventos</a></div>
+  <div class="contact-row"><span class="contact-ico">📞</span>Pide el depto. de Banquetes al conmutar</div>
+  <div class="card-note">Capacidad hasta 1,300 personas. Múltiples salones. Ideal para shows corporativos de gran escala.</div>
+</div>
+
+<div class="card hotel" data-cat="hotel" data-text="Camino Real Pedregal banquetes entretenimiento eventos">
+  <span class="card-tag tag-hotel">Hotel 5★ · Sur CDMX</span>
+  <div class="card-name">CAMINO REAL PEDREGAL</div>
+  <div class="card-area">Pedregal, CDMX · 14 salones, 2,627 m²</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.grupocaminoreal.com/camino-real-pedregal-mexico/reuniones-y-eventos" target="_blank">Página de eventos</a></div>
+  <div class="contact-row"><span class="contact-ico">✉️</span><a href="https://www.grupocaminoreal.com/contacto" target="_blank">Formulario de contacto</a></div>
+  <div class="card-note">Especializado en eventos sociales y corporativos. Terraza para hasta 260 personas.</div>
+</div>
+
+<div class="card hotel" data-cat="hotel" data-text="Royal Pedregal teatro entretenimiento eventos culturales">
+  <span class="card-tag tag-hotel">Complejo · Teatro + Hotel</span>
+  <div class="card-name">COMPLEJO ROYAL PEDREGAL</div>
+  <div class="card-area">Sur CDMX · Teatro 380 butacas + VIP</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.teatroroyalpedregal.com" target="_blank">teatroroyalpedregal.com</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Contacto vía web · Pide al área de Programación</div>
+  <div class="card-note">Teatro con tramoya, iluminación y audio profesional. Ideal para funciones regulares pagadas. Muy afín a tu producción.</div>
+</div>
+
+<div class="card hotel" data-cat="hotel" data-text="Real del Bosque eventos golf spa corporativo">
+  <span class="card-tag tag-hotel">Hotel Resort · Eventos</span>
+  <div class="card-name">HOTEL REAL DEL BOSQUE</div>
+  <div class="card-area">CDMX · Golf, spa, jardines</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://realdelbosque.com/eventos-y-grupos" target="_blank">realdelbosque.com/eventos</a></div>
+  <div class="card-note">Eventos corporativos y sociales en áreas al aire libre. Perfecto para funciones en jardín con tu equipo de producción.</div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     GOBIERNO
+════════════════════════════════════════════ -->
+
+<div class="divider"></div>
+<div class="cat-block" id="cat-gobierno">
+  <div class="cat-header">
+    <span class="cat-icon">🏛️</span>
+    <span class="cat-title">Gobierno · Municipios · Alcaldías</span>
+    <span class="cat-count">Pago lento pero seguro</span>
+  </div>
+  <div class="cards-grid">
+
+```
+<div class="card gobierno" data-cat="gobierno" data-text="Atizapán cultura arte municipio teatro Zaragoza">
+  <span class="card-tag tag-gobierno">Municipio · Directo</span>
+  <div class="card-name">SUBDIRECCIÓN DE CULTURA ATIZAPÁN</div>
+  <div class="card-area">Atizapán de Zaragoza · Teatro Zaragoza</div>
+  <div class="contact-row"><span class="contact-ico">📍</span>Calle 5 núm. 21, Fracc. Bosques de Atizapán, CP 52967</div>
+  <div class="contact-row"><span class="contact-ico">📞</span>55 2121-3604</div>
+  <div class="contact-row"><span class="contact-ico">✉️</span><a href="mailto:culturayarte.atizapan@gmail.com">culturayarte.atizapan@gmail.com</a></div>
+  <div class="contact-row"><span class="contact-ico">👤</span>Mtro. Edgar Rainier Palacios Landeros — Subdirector</div>
+  <div class="card-note">Organizan Festival Aguablanca y Festival Internacional de las Artes. Tu contacto más natural y cercano. Escríbeles esta semana.</div>
+</div>
+
+<div class="card gobierno" data-cat="gobierno" data-text="Atizapán municipio presidencia contacto">
+  <span class="card-tag tag-gobierno">Municipio · Presidencia</span>
+  <div class="card-name">PRESIDENCIA MUNICIPAL ATIZAPÁN</div>
+  <div class="card-area">Atizapán de Zaragoza, Edo. Méx.</div>
+  <div class="contact-row"><span class="contact-ico">📍</span>Av. Adolfo López Mateos, El Potrero, López Mateos</div>
+  <div class="contact-row"><span class="contact-ico">📞</span>55 3622-2909 / 55 3622-2908</div>
+  <div class="contact-row"><span class="contact-ico">✉️</span><a href="mailto:cae@atizapan.gob.mx">cae@atizapan.gob.mx</a></div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://atizapan.gob.mx" target="_blank">atizapan.gob.mx</a></div>
+  <div class="card-note">Para eventos en plazas públicas, ferias municipales y festividades oficiales. Solicita cita con Desarrollo Social o Cultura.</div>
+</div>
+
+<div class="card gobierno" data-cat="gobierno" data-text="Atizapán centro regional cultura galería arte">
+  <span class="card-tag tag-gobierno">Centro Cultural · Estatal</span>
+  <div class="card-name">CENTRO REGIONAL DE CULTURA ATIZAPÁN</div>
+  <div class="card-area">San Juan Bosco, Atizapán · Secretaría Cultura Edomex</div>
+  <div class="contact-row"><span class="contact-ico">📍</span>Av. San Mateo 42, Col. San Juan Bosco, CP 52900</div>
+  <div class="contact-row"><span class="contact-ico">📞</span>55 5370-9879</div>
+  <div class="contact-row"><span class="contact-ico">✉️</span><a href="mailto:atizapanimc@yahoo.com.mx">atizapanimc@yahoo.com.mx</a></div>
+  <div class="card-note">Depende de la Secretaría de Cultura Edomex. Programan espectáculos con caché institucional.</div>
+</div>
+
+<div class="card gobierno" data-cat="gobierno" data-text="Festival Atzán intermunicipal Atizapán Tlalnepantla Cuautitlán Nicolás Romero arte">
+  <span class="card-tag tag-gobierno">Festival · Intermunicipal</span>
+  <div class="card-name">FESTIVAL ATZÁN</div>
+  <div class="card-area">Atizapán · Tlalnepantla · Cuautitlán · Nicolás Romero</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Contactar vía Subdirección de Cultura Atizapán</div>
+  <div class="contact-row"><span class="contact-ico">📞</span>55 2121-3604</div>
+  <div class="contact-row"><span class="contact-ico">📅</span>Festival anual — postula con 4 meses de anticipación</div>
+  <div class="card-note">Festival intermunicipal de cine, teatro, danza, gastronomía. Tu show encaja perfectamente. Convocatoria anual.</div>
+</div>
+
+<div class="card gobierno" data-cat="gobierno" data-text="FECIJ festival escénico infantil juvenil INBAL">
+  <span class="card-tag tag-gobierno">Festival · INBAL</span>
+  <div class="card-name">FECIJ · FESTIVAL ESCÉNICO INFANTIL</div>
+  <div class="card-area">INBAL · CDMX y nacional</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://inbal.mx" target="_blank">inbal.mx</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Busca la convocatoria FECIJ en la página del INBAL</div>
+  <div class="card-note">Tu conexión institucional con INBAL es una ventaja directa. Postula con tu expediente artístico.</div>
+</div>
+
+<div class="card gobierno" data-cat="gobierno" data-text="alcaldía Cuauhtémoc cultura eventos espectáculos">
+  <span class="card-tag tag-gobierno">Alcaldía · CDMX</span>
+  <div class="card-name">DIRECCIÓN DE CULTURA · CUAUHTÉMOC</div>
+  <div class="card-area">Alcaldía Cuauhtémoc, CDMX</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.cuauhtemoc.cdmx.gob.mx" target="_blank">cuauhtemoc.cdmx.gob.mx</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Pide hablar con Dirección de Cultura y Entretenimiento</div>
+  <div class="card-note">Una de las alcaldías con mayor programación cultural de CDMX. Paga cachés a compañías de espectáculos.</div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     EMPRESAS CORPORATIVAS
+════════════════════════════════════════════ -->
+
+<div class="divider"></div>
+<div class="cat-block" id="cat-empresa">
+  <div class="cat-header">
+    <span class="cat-icon">🏢</span>
+    <span class="cat-title">Empresas · Corporativos</span>
+    <span class="cat-count">Contactar a RH o Comunicación Interna</span>
+  </div>
+
+  <div class="action-card">
+    <span class="ac-icon">💡</span>
+    <div class="ac-text">
+      <div class="ac-title">Estrategia para corporativos</div>
+      <div class="ac-desc">En LinkedIn busca "Gerente de Recursos Humanos" o "Coordinador de Eventos" en empresas grandes de Atizapán, Tlalnepantla y Naucalpan. Manda mensaje directo con tu video de 90 seg. Las mejores fechas para proponer: <strong style="color:#fff">Día del Niño, Día de la Madre, Posadas, Aniversarios de empresa.</strong></div>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+
+```
+<div class="card empresa" data-cat="empresa" data-text="Kellogg's Tlalnepantla empresa corporativo eventos RH">
+  <span class="card-tag tag-empresa">Empresa · Zona Norte</span>
+  <div class="card-name">KELLOGG'S MÉXICO</div>
+  <div class="card-area">Tlalnepantla, Edo. Méx.</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.kelloggs.com.mx" target="_blank">kelloggs.com.mx</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>LinkedIn → "Recursos Humanos Kellogg's México"</div>
+  <div class="card-note">Gran empresa con programas de bienestar para empleados con hijos. Día del Niño es su fecha clave.</div>
+</div>
+
+<div class="card empresa" data-cat="empresa" data-text="Jumex jugos empresa Tlalnepantla corporativo RH eventos">
+  <span class="card-tag tag-empresa">Empresa · Zona Norte</span>
+  <div class="card-name">JUMEX</div>
+  <div class="card-area">Ecatepec / Tlalnepantla, Edo. Méx.</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.jumex.com.mx" target="_blank">jumex.com.mx</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>LinkedIn → "RH Jumex" o "Bienestar Jumex"</div>
+  <div class="card-note">Empresa familiar mexicana con fuerte cultura de eventos internos. Presupuesto en Día del Niño.</div>
+</div>
+
+<div class="card empresa" data-cat="empresa" data-text="Bimbo empresa Azcapotzalco corporativo RH eventos">
+  <span class="card-tag tag-empresa">Empresa · Nacional</span>
+  <div class="card-name">GRUPO BIMBO</div>
+  <div class="card-area">Azcapotzalco, CDMX</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.grupobimbo.com" target="_blank">grupobimbo.com</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>LinkedIn → "Coordinador Eventos Corporativos Bimbo"</div>
+  <div class="card-note">Miles de empleados en zona norte. Uno de los mayores presupuestos de bienestar laboral del país.</div>
+</div>
+
+<div class="card empresa" data-cat="empresa" data-text="plaza comercial Satélite Punta Norte marketing eventos activación">
+  <span class="card-tag tag-empresa">Plaza Comercial</span>
+  <div class="card-name">PLAZA SATÉLITE / PUNTA NORTE</div>
+  <div class="card-area">Naucalpan / Cuautitlán, Edo. Méx.</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Pide al área de <strong>Marketing y Eventos</strong> de la plaza</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.plazasatelite.com.mx" target="_blank">plazasatelite.com.mx</a></div>
+  <div class="card-note">Las plazas comerciales buscan activaciones en fechas especiales. Pueden pagar caché o ceder el espacio gratis a cambio de presencia de marca.</div>
+</div>
+
+<div class="card empresa" data-cat="empresa" data-text="Mundo E plaza entretenimiento Tlalnepantla activación marketing">
+  <span class="card-tag tag-empresa">Plaza · Entretenimiento</span>
+  <div class="card-name">MUNDO E</div>
+  <div class="card-area">Tlalnepantla · Zona Valle Dorado</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Contactar gerencia de plaza · Área de Marketing</div>
+  <div class="card-note">Centro comercial-entretenimiento. Perfecto para shows en días festivos. Tu producción visual es ideal para activaciones en mall.</div>
+</div>
+
+<div class="card empresa" data-cat="empresa" data-text="empresa organizadora eventos privados bodas quinceañeros">
+  <span class="card-tag tag-empresa">Canal · Intermediario</span>
+  <div class="card-name">AGENCIAS DE EVENTOS PRIVADOS</div>
+  <div class="card-area">CDMX · Bodas, XV años, empresariales</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Busca en Google: "agencia de entretenimiento para eventos CDMX"</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Regístrate como proveedor en: bodas.com.mx · quinceañeras.com</div>
+  <div class="card-note">Las agencias te contratan recurrentemente si quedas registrado como proveedor de entretenimiento. Pagan comisión del 15-20%.</div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ESCUELAS
+════════════════════════════════════════════ -->
+
+<div class="divider"></div>
+<div class="cat-block" id="cat-escuela">
+  <div class="cat-header">
+    <span class="cat-icon">🏫</span>
+    <span class="cat-title">Escuelas · Colegios</span>
+    <span class="cat-count">Contactar a Dirección o Coordinación Académica</span>
+  </div>
+
+  <div class="action-card">
+    <span class="ac-icon">📋</span>
+    <div class="ac-text">
+      <div class="ac-title">Cómo abordar escuelas</div>
+      <div class="ac-desc">Pide hablar con el <strong style="color:#fff">Director o Coordinador Académico</strong>. Lleva o manda: carta de presentación + video del show + precio por grupo. Las mejores fechas escolares: <strong style="color:#fff">Día del Niño (30 abr), clausuras (jun-jul), inicio de ciclo (ago-sep), Día de la Madre (may).</strong></div>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+
+```
+<div class="card escuela" data-cat="escuela" data-text="colegio privado Atizapán Tlalnepantla Naucalpan eventos escolares">
+  <span class="card-tag tag-escuela">Estrategia · Colegios Privados</span>
+  <div class="card-name">COLEGIOS PRIVADOS ZONA NORTE</div>
+  <div class="card-area">Atizapán · Tlalnepantla · Naucalpan · Cuautitlán</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Busca en Google Maps: "colegio privado Atizapán" → llama directo</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Los colegios bilingües y de alto nivel tienen presupuesto para eventos</div>
+  <div class="card-note">Meta: 15 colegios contactados esta semana. Precio sugerido: $8,000-$15,000 por función escolar completa (show de 45 min).</div>
+</div>
+
+<div class="card escuela" data-cat="escuela" data-text="SEP escuelas públicas festivales escolares delegación">
+  <span class="card-tag tag-escuela">Canal · Escuelas Públicas</span>
+  <div class="card-name">SUPERVISIONES ESCOLARES SEP</div>
+  <div class="card-area">Zona Escolar Atizapán / Tlalnepantla</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Contacta la Supervisión de Zona más cercana</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Un contacto en supervisión puede abrir 10-15 escuelas simultáneamente</div>
+  <div class="card-note">Las escuelas públicas tienen presupuesto de actividades culturales. Un supervisor de zona puede recomendarte a múltiples directores.</div>
+</div>
+
+<div class="card escuela" data-cat="escuela" data-text="universidad tecnológica México UNITEC campus eventos">
+  <span class="card-tag tag-escuela">Universidad · Nivel Superior</span>
+  <div class="card-name">UNITEC / UTVM / ICEL ZONA NORTE</div>
+  <div class="card-area">Tlalnepantla · Naucalpan · Satélite</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Contactar Coordinación de Cultura y Difusión</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Propón funciones en sus auditorios como evento cultural</div>
+  <div class="card-note">Las universidades privadas pagan cachés para eventos culturales y tienen auditorios propios. Público teens-adultos jóvenes = fans K-pop.</div>
+</div>
+
+<div class="card escuela" data-cat="escuela" data-text="academias baile kpop danza estudiantes">
+  <span class="card-tag tag-escuela">Alianza · Academias</span>
+  <div class="card-name">ACADEMIAS DE BAILE K-POP / DANZA</div>
+  <div class="card-area">CDMX y Zona Metropolitana</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Busca en Instagram: "academia kpop cdmx" "academia baile atizapán"</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Propón alianza: sus alumnos participan + tú das el espectáculo</div>
+  <div class="card-note">Las academias de K-pop son tu audiencia natural. Alianza ideal: sus alumnos van al show y tú les das visibilidad. Win-win.</div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CIRCOS Y PARQUES
+════════════════════════════════════════════ -->
+
+<div class="divider"></div>
+<div class="cat-block" id="cat-circo">
+  <div class="cat-header">
+    <span class="cat-icon">🎪</span>
+    <span class="cat-title">Circos · Parques · Entretenimiento Familiar</span>
+    <span class="cat-count">Contactar a Dirección Artística o Producción</span>
+  </div>
+  <div class="cards-grid">
+
+```
+<div class="card circo" data-cat="circo" data-text="Kidzania CDMX entretenimiento niños shows">
+  <span class="card-tag tag-circo">Parque · Niños</span>
+  <div class="card-name">KIDZANIA CDMX</div>
+  <div class="card-area">Santa Fe, CDMX</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://cdmx.kidzania.com" target="_blank">cdmx.kidzania.com</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Contactar al área de <strong>Programación y Entretenimiento</strong></div>
+  <div class="card-note">Miles de niños al mes. Buscan shows de alta calidad visual. Tu producción con luces y humo es perfecta para su formato.</div>
+</div>
+
+<div class="card circo" data-cat="circo" data-text="Six Flags CDMX parque atracciones entretenimiento shows">
+  <span class="card-tag tag-circo">Parque · Temático</span>
+  <div class="card-name">SIX FLAGS CDMX</div>
+  <div class="card-area">Tlalpan, CDMX</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.sixflags.com.mx" target="_blank">sixflags.com.mx</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Área de <strong>Entretenimiento y Shows en Vivo</strong></div>
+  <div class="card-note">Programan shows de temporada en sus escenarios. K-pop es exactamente el género que buscan para atraer teens.</div>
+</div>
+
+<div class="card circo" data-cat="circo" data-text="Circo Atayde hermanos circo México espectáculo">
+  <span class="card-tag tag-circo">Circo · Nacional</span>
+  <div class="card-name">CIRCO ATAYDE HERMANOS</div>
+  <div class="card-area">Gira Nacional · CDMX base</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.circoatayde.com.mx" target="_blank">circoatayde.com.mx</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Contactar Dirección Artística para actos especiales</div>
+  <div class="card-note">El circo más emblemático de México. Incorporan actos especiales de temporada. Tu show K-pop sería un atractivo diferenciador.</div>
+</div>
+
+<div class="card circo" data-cat="circo" data-text="Peppa Pig mundo Nickelodeon entretenimiento familiar parque">
+  <span class="card-tag tag-circo">Entretenimiento · Familiar</span>
+  <div class="card-name">SHOWS ITINERANTES FAMILIARES</div>
+  <div class="card-area">CDMX y Zona Metropolitana</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Busca en Google: "productor de shows infantiles CDMX"</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Regístrate como acto en: <strong>productorasmexicanas.com</strong></div>
+  <div class="card-note">Productoras de shows itinerantes siempre buscan actos de calidad para incorporar a sus temporadas. Pagan caché fijo por función.</div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FESTIVALES Y FERIAS
+════════════════════════════════════════════ -->
+
+<div class="divider"></div>
+<div class="cat-block" id="cat-festival">
+  <div class="cat-header">
+    <span class="cat-icon">🎡</span>
+    <span class="cat-title">Festivales · Ferias · Eventos Masivos</span>
+    <span class="cat-count">Postular con 3-4 meses de anticipación</span>
+  </div>
+  <div class="cards-grid">
+
+```
+<div class="card festival" data-cat="festival" data-text="Feria León Guanajuato espectáculos artísticos">
+  <span class="card-tag tag-festival">Feria · Nacional</span>
+  <div class="card-name">FERIA NACIONAL DE LEÓN</div>
+  <div class="card-area">León, Guanajuato · Enero-Febrero</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.feria.com.mx" target="_blank">feria.com.mx</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Contactar Dirección Artística con tu dossier</div>
+  <div class="card-note">Una de las ferias más grandes de México. Cachés de $20,000-$50,000 para espectáculos de calidad.</div>
+</div>
+
+<div class="card festival" data-cat="festival" data-text="Feria Puebla espectáculos artísticos abril mayo">
+  <span class="card-tag tag-festival">Feria · Regional</span>
+  <div class="card-name">FERIA DE PUEBLA</div>
+  <div class="card-area">Puebla · Abril-Mayo</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.feriadepuebla.com" target="_blank">feriadepuebla.com</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Postular a Dirección de Espectáculos con 4 meses de anticipación</div>
+  <div class="card-note">Cerca de CDMX. Público masivo familiar. Ideal para tu show de 45-60 min en escenario al aire libre.</div>
+</div>
+
+<div class="card festival" data-cat="festival" data-text="Cumbre Tajín Veracruz festival danza espectáculo">
+  <span class="card-tag tag-festival">Festival · Cultural</span>
+  <div class="card-name">CUMBRE TAJÍN</div>
+  <div class="card-area">Papantla, Veracruz · Marzo</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.cumbretajin.com" target="_blank">cumbretajin.com</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Convoatoria abierta para propuestas artísticas</div>
+  <div class="card-note">Festival multicultural que incorpora géneros urbanos y pop. Tu propuesta interdisciplinaria encaja bien.</div>
+</div>
+
+<div class="card festival" data-cat="festival" data-text="festival K-pop anime convención México fans">
+  <span class="card-tag tag-festival">Festival · K-pop/Anime</span>
+  <div class="card-name">CONVENCIONES K-POP / ANIME CDMX</div>
+  <div class="card-area">CDMX · Todo el año</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Busca en Facebook: "KoreaCon México" "Anime Expo CDMX" "KpopFest"</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Proponte como acto principal — tu audiencia exacta</div>
+  <div class="card-note">Las convenciones K-pop en CDMX reúnen a tu público exacto. Cachés menores pero visibilidad altísima para construir fanbase.</div>
+</div>
+
+<div class="card festival" data-cat="festival" data-text="Cervantino Guanajuato festival internacional artes escénicas">
+  <span class="card-tag tag-festival">Festival · Internacional</span>
+  <div class="card-name">FESTIVAL INTERNACIONAL CERVANTINO</div>
+  <div class="card-area">Guanajuato · Octubre</div>
+  <div class="contact-row"><span class="contact-ico">🌐</span><a href="https://www.festivalcervantino.gob.mx" target="_blank">festivalcervantino.gob.mx</a></div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Convocatoria abre en enero para octubre. Postula con tu expediente FONCA.</div>
+  <div class="card-note">El festival de artes más importante de México. Tu perfil con doble licenciatura INBAL y postulación FONCA es exactamente lo que buscan.</div>
+</div>
+
+<div class="card festival" data-cat="festival" data-text="alcaldía feria barrio colonia eventos culturales CDMX">
+  <span class="card-tag tag-festival">Canal · Alcaldías CDMX</span>
+  <div class="card-name">FERIAS DE BARRIO · ALCALDÍAS CDMX</div>
+  <div class="card-area">Todas las alcaldías · Todo el año</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Contactar Dirección de Cultura de cada alcaldía</div>
+  <div class="contact-row"><span class="contact-ico">💡</span>Cuauhtémoc, BJ, Miguel Hidalgo, Iztapalapa tienen más presupuesto</div>
+  <div class="card-note">Las alcaldías programan shows en sus espacios culturales todo el año. Pagan cachés de $8,000-$20,000 y tienen escenarios equipados.</div>
+</div>
+```
+
+  </div>
+</div>
+
+<div class="divider"></div>
+<div class="footer">STUDIO B · DIRECTORIO DE CONTACTOS · GUERRERAS K-POP 2025</div>
+
+</div>
+
+<script>
+let currentTab = 'all';
+
+function filterTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.cat-block').forEach(block => {
+    const catId = block.id.replace('cat-','');
+    block.classList.toggle('hidden', tab !== 'all' && catId !== tab);
+  });
+  filterCards();
+}
+
+function filterCards() {
+  const q = document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('.card').forEach(card => {
+    const text = (card.dataset.text + ' ' + card.textContent).toLowerCase();
+    const matchSearch = !q || text.includes(q);
+    const matchTab = currentTab === 'all' || card.dataset.cat === currentTab;
+    card.classList.toggle('hidden', !(matchSearch && matchTab));
+  });
+}
+</script>
+
+</body>
+</html>
