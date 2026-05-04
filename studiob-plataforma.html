@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio B · Plataforma Operativa</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C9A84C; --gold-l:#E8C97A; --gold-p:#F5E6C0;
+  --bg:#07070A; --dark:#0D0D12; --card:#121218; --card2:#18181F;
+  --border:rgba(201,168,76,.15); --border-s:rgba(201,168,76,.35);
+  --text:#E8E2D8; --muted:#6A6460; --white:#F5F0E8;
+  --green:#27AE60; --red:#C0392B; --blue:#2471A3;
+  --sidebar:200px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;line-height:1.7;overflow-x:hidden;}
+input,select,textarea,button{font-family:inherit;}
+
+/* ══ LAYOUT ══════════════════════════════ */
+.app{display:flex;min-height:100vh;}
+
+/* ══ SIDEBAR ═════════════════════════════ */
+.sidebar{
+width:var(–sidebar);flex-shrink:0;
+background:var(–dark);
+border-right:1px solid var(–border);
+display:flex;flex-direction:column;
+position:fixed;top:0;left:0;bottom:0;z-index:100;
+overflow-y:auto;
+}
+.sidebar-logo{
+padding:24px 16px 20px;
+border-bottom:1px solid var(–border);
+}
+.logo-studio{font-family:‘Bebas Neue’,sans-serif;font-size:26px;letter-spacing:5px;color:var(–white);line-height:1;}
+.logo-b{color:var(–gold);text-shadow:0 0 20px rgba(201,168,76,.4);}
+.logo-sub{font-family:‘Space Mono’,monospace;font-size:7px;letter-spacing:3px;color:var(–muted);text-transform:uppercase;margin-top:4px;}
+
+.nav{flex:1;padding:16px 0;}
+.nav-section-label{font-family:‘Space Mono’,monospace;font-size:7px;letter-spacing:3px;color:var(–muted);text-transform:uppercase;padding:12px 16px 6px;}
+.nav-item{
+display:flex;align-items:center;gap:8px;
+padding:9px 16px;cursor:pointer;
+font-family:‘Space Mono’,monospace;font-size:9px;letter-spacing:1px;
+color:var(–muted);text-transform:uppercase;
+border-left:2px solid transparent;
+transition:all .2s;white-space:nowrap;overflow:hidden;
+}
+.nav-item:hover{color:var(–text);background:rgba(201,168,76,.04);}
+.nav-item.active{color:var(–gold);border-left-color:var(–gold);background:rgba(201,168,76,.06);}
+.nav-icon{font-size:14px;flex-shrink:0;}
+
+.sidebar-footer{padding:16px;border-top:1px solid var(–border);}
+.sf-name{font-family:‘Bebas Neue’,sans-serif;font-size:13px;letter-spacing:2px;color:var(–white);}
+.sf-role{font-family:‘Space Mono’,monospace;font-size:7px;letter-spacing:2px;color:var(–muted);}
+
+/* ══ MAIN ════════════════════════════════ */
+.main{margin-left:var(–sidebar);flex:1;min-height:100vh;}
+
+/* ══ TOPBAR ══════════════════════════════ */
+.topbar{
+background:rgba(13,13,18,.95);
+backdrop-filter:blur(10px);
+border-bottom:1px solid var(–border);
+padding:14px 32px;
+display:flex;align-items:center;justify-content:space-between;
+position:sticky;top:0;z-index:50;
+}
+.topbar-title{font-family:‘Bebas Neue’,sans-serif;font-size:20px;letter-spacing:3px;color:#fff;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.badge-live{font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:2px;background:rgba(39,174,96,.12);border:1px solid rgba(39,174,96,.3);color:#2ECC71;padding:3px 10px;border-radius:20px;}
+
+/* ══ PANELS ══════════════════════════════ */
+.panel{display:none;padding:32px;animation:fadeUp .35s ease both;}
+.panel.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══ COMPONENTES GLOBALES ════════════════ */
+.section-title{font-family:‘Bebas Neue’,sans-serif;font-size:clamp(24px,4vw,40px);letter-spacing:4px;color:#fff;margin-bottom:6px;}
+.section-sub{font-size:14px;font-style:italic;color:var(–muted);margin-bottom:28px;}
+.eyebrow{font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:4px;color:var(–gold);text-transform:uppercase;margin-bottom:8px;}
+
+.card{background:var(–card);border:1px solid var(–border);border-radius:4px;padding:22px 24px;position:relative;overflow:hidden;transition:border-color .2s;}
+.card:hover{border-color:var(–border-s);}
+.card-accent{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(–gold),var(–gold-l));}
+.card-title{font-family:‘Bebas Neue’,sans-serif;font-size:18px;letter-spacing:2px;color:#fff;margin-bottom:8px;}
+.card-text{font-size:13px;color:rgba(232,226,216,.7);line-height:1.8;}
+.card-text strong{color:var(–gold-l);}
+
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+
+.kpi{background:var(–card);border:1px solid var(–border);padding:18px 20px;border-radius:4px;}
+.kpi-val{font-family:‘Bebas Neue’,sans-serif;font-size:36px;letter-spacing:2px;color:var(–gold);line-height:1;text-shadow:0 0 20px rgba(201,168,76,.3);}
+.kpi-label{font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:2px;color:var(–muted);text-transform:uppercase;margin-top:4px;}
+.kpi-sub{font-size:12px;color:var(–muted);margin-top:2px;font-style:italic;}
+
+.protect{background:rgba(201,168,76,.05);border-left:3px solid var(–gold);padding:12px 16px;font-size:13px;color:rgba(232,226,216,.8);line-height:1.8;margin:14px 0;border-radius:0 3px 3px 0;}
+.protect strong{color:var(–gold-l);}
+.danger{background:rgba(192,57,43,.06);border-left:3px solid var(–red);padding:12px 16px;font-size:13px;color:rgba(232,226,216,.8);line-height:1.8;margin:14px 0;border-radius:0 3px 3px 0;}
+.danger strong{color:#E74C3C;}
+.success{background:rgba(39,174,96,.06);border-left:3px solid var(–green);padding:12px 16px;font-size:13px;color:rgba(232,226,216,.8);line-height:1.8;margin:14px 0;border-radius:0 3px 3px 0;}
+.success strong{color:#2ECC71;}
+
+.btn{font-family:‘Space Mono’,monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:9px 18px;border-radius:3px;border:none;cursor:pointer;transition:all .2s;}
+.btn-gold{background:var(–gold);color:#000;}
+.btn-gold:hover{background:var(–gold-l);}
+.btn-outline{background:transparent;border:1px solid var(–border-s);color:var(–gold);}
+.btn-outline:hover{background:rgba(201,168,76,.08);}
+.btn-ghost{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(–muted);}
+.btn-ghost:hover{color:var(–text);}
+
+.tag{display:inline-block;font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:1px;padding:2px 9px;border-radius:20px;}
+.tag-gold{background:rgba(201,168,76,.1);color:var(–gold);border:1px solid var(–border-s);}
+.tag-green{background:rgba(39,174,96,.1);color:#2ECC71;border:1px solid rgba(39,174,96,.3);}
+.tag-red{background:rgba(192,57,43,.1);color:#E74C3C;border:1px solid rgba(192,57,43,.3);}
+.tag-blue{background:rgba(36,113,163,.1);color:#5DADE2;border:1px solid rgba(36,113,163,.3);}
+.tag-muted{background:rgba(255,255,255,.04);color:var(–muted);border:1px solid rgba(255,255,255,.08);}
+
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(–border-s),transparent);margin:28px 0;}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(–border);margin-bottom:24px;overflow-x:auto;}
+.tab{font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:10px 16px;border:none;background:transparent;color:var(–muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;}
+.tab:hover{color:var(–text);}
+.tab.active{color:var(–gold);border-bottom-color:var(–gold);}
+.tab-panel{display:none;}.tab-panel.active{display:block;animation:fadeUp .3s ease both;}
+
+/* FORM */
+label{font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:2px;color:var(–muted);text-transform:uppercase;display:block;margin-bottom:5px;}
+input[type=text],input[type=email],input[type=number],input[type=date],select,textarea{
+width:100%;background:rgba(18,18,24,.9);border:1px solid var(–border);border-radius:3px;
+padding:10px 14px;color:var(–text);font-size:13px;outline:none;transition:border-color .2s;
+font-family:‘Cormorant Garamond’,serif;
+}
+input:focus,select:focus,textarea:focus{border-color:var(–gold);}
+input::placeholder,textarea::placeholder{color:var(–muted);}
+textarea{resize:vertical;min-height:100px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-full{grid-column:1/-1;}
+.form-group{margin-bottom:14px;}
+select option{background:#1a1a24;color:var(–text);}
+
+/* SCRIPT BLOCK */
+.script-block{background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.2);border-radius:4px;padding:20px 22px;margin:12px 0;position:relative;}
+.script-block-label{font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:3px;color:var(–gold);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.script-content{font-size:13.5px;color:var(–text);line-height:1.9;font-style:italic;white-space:pre-line;}
+.script-content strong{font-style:normal;color:var(–gold-l);}
+.copy-btn{font-family:‘Space Mono’,monospace;font-size:7px;letter-spacing:2px;background:rgba(201,168,76,.1);border:1px solid var(–border-s);color:var(–gold);padding:3px 10px;border-radius:2px;cursor:pointer;transition:all .2s;}
+.copy-btn:hover{background:rgba(201,168,76,.2);}
+
+/* CONTACT TABLE */
+.contact-table{width:100%;border-collapse:collapse;font-size:13px;}
+.contact-table th{font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:2px;color:var(–muted);text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(–border);background:rgba(0,0,0,.2);}
+.contact-table td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+.contact-table tr:hover td{background:rgba(201,168,76,.03);}
+.contact-table td a{color:var(–gold-l);text-decoration:none;}
+.contact-table td a:hover{text-decoration:underline;}
+
+/* CONTRACT */
+.contract-area{background:var(–card2);border:1px solid var(–border);border-radius:4px;padding:28px 32px;font-size:14px;line-height:2;color:rgba(232,226,216,.85);}
+.contract-area h3{font-family:‘Bebas Neue’,sans-serif;font-size:18px;letter-spacing:3px;color:#fff;margin:20px 0 8px;border-bottom:1px solid var(–border);padding-bottom:6px;}
+.contract-area h3:first-child{margin-top:0;}
+.contract-field{display:inline-block;border-bottom:1px solid var(–border-s);min-width:120px;color:var(–gold-l);font-style:italic;}
+.contract-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+
+/* TRACKER */
+.tracker-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap;}
+.tracker-row:last-child{border-bottom:none;}
+.tracker-name{flex:1;min-width:120px;font-size:14px;font-weight:600;color:#fff;}
+.tracker-type{font-size:12px;color:var(–muted);font-style:italic;}
+.tracker-status select{background:var(–card2);border:1px solid var(–border);color:var(–text);padding:4px 8px;border-radius:3px;font-size:11px;font-family:‘Space Mono’,monospace;}
+.tracker-notes{flex:2;font-size:12px;color:var(–muted);}
+
+/* PROGRESS */
+.progress-wrap{margin:16px 0;}
+.progress-bar-bg{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-top:4px;}
+.progress-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(–gold),var(–gold-l));transition:width .5s;}
+
+/* MOBILE */
+@media(max-width:768px){
+:root{–sidebar:0px;}
+.sidebar{transform:translateX(-200px);transition:transform .3s;}
+.sidebar.open{transform:translateX(0);}
+.main{margin-left:0;}
+.topbar{padding:12px 16px;}
+.panel{padding:20px 16px;}
+.form-row{grid-template-columns:1fr;}
+.hamburger{display:flex!important;}
+}
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:4px;}
+.hamburger span{width:20px;height:2px;background:var(–muted);border-radius:1px;}
+</style>
+
+</head>
+<body>
+
+<div class="app">
+
+<!-- ══════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════ -->
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-studio">STUDIO <span class="logo-b">B</span></div>
+    <div class="logo-sub">Plataforma Operativa</div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section-label">Principal</div>
+    <div class="nav-item active" onclick="showPanel('dashboard',this)">
+      <span class="nav-icon">◈</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPanel('directorio',this)">
+      <span class="nav-icon">◎</span> Directorio
+    </div>
+
+```
+<div class="nav-section-label">Ventas</div>
+<div class="nav-item" onclick="showPanel('correos',this)">
+  <span class="nav-icon">✉</span> Correos
+</div>
+<div class="nav-item" onclick="showPanel('tratos',this)">
+  <span class="nav-icon">◆</span> Tratos
+</div>
+<div class="nav-item" onclick="showPanel('contratos',this)">
+  <span class="nav-icon">▣</span> Contratos
+</div>
+
+<div class="nav-section-label">Seguimiento</div>
+<div class="nav-item" onclick="showPanel('tracker',this)">
+  <span class="nav-icon">◉</span> Tracker CRM
+</div>
+<div class="nav-item" onclick="showPanel('estrategia',this)">
+  <span class="nav-icon">◐</span> Estrategia
+</div>
+```
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sf-name">STUDIO B</div>
+    <div class="sf-role">Gerard Estrada · Dir. Artístico</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════ -->
+
+<div class="main">
+
+  <!-- TOPBAR -->
+
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="hamburger" onclick="toggleSidebar()" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <span class="badge-live">● Operativo</span>
+    </div>
+  </div>
+
+<!-- ══════════════════════════════════════
+     PANEL: DASHBOARD
+══════════════════════════════════════ -->
+
+<div id="panel-dashboard" class="panel active">
+  <div class="eyebrow">Vista General</div>
+  <div class="section-title">CENTRO DE OPERACIONES</div>
+  <div class="section-sub">Todo lo que necesitas para operar Studio B, en un solo lugar.</div>
+
+  <!-- KPIs -->
+
+  <div class="grid-4" style="margin-bottom:24px">
+    <div class="kpi">
+      <div class="kpi-val">5</div>
+      <div class="kpi-label">Productos en catálogo</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#2ECC71">7</div>
+      <div class="kpi-label">Tipos de cliente</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#5DADE2">8</div>
+      <div class="kpi-label">Performers en elenco</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#E74C3C">6</div>
+      <div class="kpi-label">Venues de referencia</div>
+    </div>
+  </div>
+
+  <!-- MÓDULOS -->
+
+  <div class="grid-3" style="margin-bottom:24px">
+    <div class="card" onclick="showPanel('directorio',document.querySelector('[onclick*=directorio]'))" style="cursor:pointer">
+      <div class="card-accent"></div>
+      <div style="font-size:28px;margin-bottom:10px">◎</div>
+      <div class="card-title">DIRECTORIO</div>
+      <div class="card-text">Hoteles, gobierno, empresas, escuelas, circos y festivales. Contactos listos para usar.</div>
+    </div>
+    <div class="card" onclick="showPanel('correos',document.querySelector('[onclick*=correos]'))" style="cursor:pointer">
+      <div class="card-accent"></div>
+      <div style="font-size:28px;margin-bottom:10px">✉</div>
+      <div class="card-title">CORREOS</div>
+      <div class="card-text">Cuerpos de email y WhatsApp por tipo de cliente. Copia y personaliza en segundos.</div>
+    </div>
+    <div class="card" onclick="showPanel('tratos',document.querySelector('[onclick*=tratos]'))" style="cursor:pointer">
+      <div class="card-accent"></div>
+      <div style="font-size:28px;margin-bottom:10px">◆</div>
+      <div class="card-title">TRATOS</div>
+      <div class="card-text">Estructuras de negociación, precios y términos por tipo de cliente.</div>
+    </div>
+    <div class="card" onclick="showPanel('contratos',document.querySelector('[onclick*=contratos]'))" style="cursor:pointer">
+      <div class="card-accent"></div>
+      <div style="font-size:28px;margin-bottom:10px">▣</div>
+      <div class="card-title">CONTRATOS</div>
+      <div class="card-text">Plantillas de contrato listas. Llena los campos y descarga o copia.</div>
+    </div>
+    <div class="card" onclick="showPanel('tracker',document.querySelector('[onclick*=tracker]'))" style="cursor:pointer">
+      <div class="card-accent"></div>
+      <div style="font-size:28px;margin-bottom:10px">◉</div>
+      <div class="card-title">TRACKER CRM</div>
+      <div class="card-text">Seguimiento de prospectos. Estado de cada contacto y próximo paso.</div>
+    </div>
+    <div class="card" onclick="showPanel('estrategia',document.querySelector('[onclick*=estrategia]'))" style="cursor:pointer">
+      <div class="card-accent"></div>
+      <div style="font-size:28px;margin-bottom:10px">◐</div>
+      <div class="card-title">ESTRATEGIA</div>
+      <div class="card-text">Psicología del comprador, objeciones y plan de acción semanal.</div>
+    </div>
+  </div>
+
+  <!-- CATÁLOGO -->
+
+  <div class="rule"></div>
+  <div class="eyebrow">Catálogo de Productos</div>
+  <div class="grid-3" style="margin-bottom:8px">
+    <div class="card">
+      <div class="card-title">🎤 K-POP TRIBUTE</div>
+      <div class="card-text">8 performers · luces · humo · 45-60 min</div>
+      <div style="margin-top:10px"><span class="tag tag-gold">$15K–$40K</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎭 CONFESIONES DE ÓPERA</div>
+      <div class="card-text">Teatro musical · Tenor + elenco · 60 min</div>
+      <div style="margin-top:10px"><span class="tag tag-gold">$12K–$30K</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎪 SHOW ESCOLAR</div>
+      <div class="card-text">K-pop + clown · Interactivo · 30-45 min</div>
+      <div style="margin-top:10px"><span class="tag tag-gold">$8K–$18K</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎵 RECITAL ÍNTIMO</div>
+      <div class="card-text">Tenor + pianista · Voz y piano · 45 min</div>
+      <div style="margin-top:10px"><span class="tag tag-gold">$8K–$20K</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🌟 PRODUCCIÓN A MEDIDA</div>
+      <div class="card-text">Llave en mano · Cualquier género y escala</div>
+      <div style="margin-top:10px"><span class="tag tag-gold">Desde $35K</span></div>
+    </div>
+  </div>
+
+  <!-- REGLAS DE ORO -->
+
+  <div class="rule"></div>
+  <div class="eyebrow">Reglas de Oro · Nunca Romper</div>
+  <div class="grid-2">
+    <div class="protect"><strong>Anticipo antes de bloquear fecha.</strong> Sin dinero en cuenta no existe el trato.</div>
+    <div class="protect"><strong>Liquidación antes de iniciar el show.</strong> Una vez que sube el telón, el poder de negociación es cero.</div>
+    <div class="danger"><strong>Nunca presentes sin contrato mínimo.</strong> Fecha, monto y condición de cancelación por escrito.</div>
+    <div class="danger"><strong>No reveles tu mínimo primero.</strong> Cotiza siempre 20-30% arriba de tu piso.</div>
+  </div>
+
+  <!-- PROYECCIÓN FINANCIERA -->
+
+  <div class="rule"></div>
+  <div class="eyebrow">Proyección Financiera · 4–6 Funciones por Mes</div>
+  <div class="section-sub" style="margin-bottom:20px">Mezcla de caché fijo y taquilla propia · Costo de producción $10K–$20K por función</div>
+
+  <!-- SLIDER DE ESCENARIO -->
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-accent"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+      <div class="card-title" style="margin:0">Simulador de Escenario</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" style="font-size:8px" onclick="setScenario('pesimista',this)">Pesimista</button>
+        <button class="btn btn-gold" style="font-size:8px" id="btn-realista" onclick="setScenario('realista',this)">Realista</button>
+        <button class="btn btn-ghost" style="font-size:8px" onclick="setScenario('optimo',this)">Óptimo</button>
+      </div>
+    </div>
+
+```
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">
+  <div>
+    <label>Funciones por mes</label>
+    <input type="range" id="sl-funciones" min="1" max="10" value="5" oninput="updateProyeccion()" style="width:100%;accent-color:var(--gold);margin:8px 0">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);text-align:center" id="sl-func-val">5</div>
+  </div>
+  <div>
+    <label>Caché promedio por función ($)</label>
+    <input type="range" id="sl-cache" min="8000" max="60000" step="1000" value="22000" oninput="updateProyeccion()" style="width:100%;accent-color:var(--gold);margin:8px 0">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);text-align:center" id="sl-cache-val">$22,000</div>
+  </div>
+  <div>
+    <label>Costo producción por función ($)</label>
+    <input type="range" id="sl-costo" min="5000" max="35000" step="500" value="15000" oninput="updateProyeccion()" style="width:100%;accent-color:var(--gold);margin:8px 0">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);text-align:center" id="sl-costo-val">$15,000</div>
+  </div>
+  <div>
+    <label>% funciones en taquilla propia</label>
+    <input type="range" id="sl-taquilla" min="0" max="100" step="10" value="30" oninput="updateProyeccion()" style="width:100%;accent-color:var(--gold);margin:8px 0">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);text-align:center" id="sl-taq-val">30%</div>
+  </div>
+</div>
+
+<!-- RESULTADOS -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px">
+  <div class="kpi"><div class="kpi-val" id="res-bruto" style="color:#2ECC71">$110K</div><div class="kpi-label">Ingreso bruto mensual</div></div>
+  <div class="kpi"><div class="kpi-val" id="res-costos" style="color:#E74C3C">$75K</div><div class="kpi-label">Costos totales</div></div>
+  <div class="kpi"><div class="kpi-val" id="res-neto" style="color:var(--gold)">$35K</div><div class="kpi-label">Utilidad neta mensual</div></div>
+  <div class="kpi"><div class="kpi-val" id="res-anual" style="color:var(--gold-l)">$420K</div><div class="kpi-label">Proyección anual</div></div>
+  <div class="kpi"><div class="kpi-val" id="res-margen" style="color:#5DADE2">32%</div><div class="kpi-label">Margen de utilidad</div></div>
+</div>
+
+<!-- BARRA DE MARGEN -->
+<div>
+  <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px">
+    <span>MARGEN DE UTILIDAD</span><span id="res-margen2">32%</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="margen-bar" style="width:32%"></div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- TABLA ANUAL -->
+
+  <div class="eyebrow" style="margin-bottom:12px">Proyección Anual por Mix de Clientes</div>
+  <div style="overflow-x:auto">
+  <table class="contact-table" style="margin-bottom:20px">
+    <thead>
+      <tr>
+        <th>Tipo de función</th><th>Funciones/mes</th><th>Caché prom.</th>
+        <th>Ingreso/mes</th><th>Costo/mes</th><th>Utilidad/mes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Hotel / Empresa (caché fijo)</strong></td>
+        <td>2</td><td class="mono">$25,000</td>
+        <td class="mono" style="color:#2ECC71">$50,000</td>
+        <td class="mono" style="color:#E74C3C">$28,000</td>
+        <td class="mono" style="color:var(--gold)"><strong>$22,000</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Escuelas (caché fijo)</strong></td>
+        <td>2</td><td class="mono">$12,000</td>
+        <td class="mono" style="color:#2ECC71">$24,000</td>
+        <td class="mono" style="color:#E74C3C">$20,000</td>
+        <td class="mono" style="color:var(--gold)"><strong>$4,000</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Taquilla propia (teatro)</strong></td>
+        <td>1</td><td class="mono">$40,000 taquilla</td>
+        <td class="mono" style="color:#2ECC71">$40,000</td>
+        <td class="mono" style="color:#E74C3C">$30,000</td>
+        <td class="mono" style="color:var(--gold)"><strong>$10,000</strong></td>
+      </tr>
+      <tr style="background:rgba(201,168,76,.04)">
+        <td><strong>TOTAL MENSUAL</strong></td>
+        <td><strong>5</strong></td><td>—</td>
+        <td class="mono" style="color:#2ECC71;font-family:'Bebas Neue',sans-serif;font-size:18px">$114,000</td>
+        <td class="mono" style="color:#E74C3C;font-family:'Bebas Neue',sans-serif;font-size:18px">$78,000</td>
+        <td class="mono" style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:18px"><strong>$36,000</strong></td>
+      </tr>
+      <tr style="background:rgba(201,168,76,.08)">
+        <td><strong>PROYECCIÓN ANUAL</strong></td>
+        <td><strong>60</strong></td><td>—</td>
+        <td class="mono" style="color:#2ECC71;font-family:'Bebas Neue',sans-serif;font-size:20px">$1,368,000</td>
+        <td class="mono" style="color:#E74C3C;font-family:'Bebas Neue',sans-serif;font-size:20px">$936,000</td>
+        <td class="mono" style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:20px"><strong>$432,000</strong></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- PUNTO DE EQUILIBRIO -->
+
+  <div class="grid-2">
+    <div class="protect">
+      <strong>Punto de equilibrio mensual:</strong> Con costos fijos de ~$78,000/mes necesitas mínimo <strong>4 funciones de caché fijo a $20,000</strong> para no perder. Por eso la meta de 4–6 funciones es la correcta — la 5ª y 6ª función son casi pura ganancia.
+    </div>
+    <div class="success">
+      <strong>Escenario óptimo anual:</strong> Si en 6 meses escalas a 6 funciones promedio con cachés de $25,000 y reduces costos al 60%, tu utilidad anual puede alcanzar <strong>$600,000–$720,000 MXN</strong>.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANEL: DIRECTORIO
+══════════════════════════════════════ -->
+
+<div id="panel-directorio" class="panel">
+  <div class="eyebrow">Base de Datos</div>
+  <div class="section-title">DIRECTORIO DE CONTACTOS</div>
+  <div class="section-sub">Todos los contactos prioritarios organizados por tipo de cliente.</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('dir','hoteles',this)">🏨 Hoteles</button>
+    <button class="tab" onclick="showTab('dir','gobierno',this)">🏛️ Gobierno</button>
+    <button class="tab" onclick="showTab('dir','empresas',this)">🏢 Empresas</button>
+    <button class="tab" onclick="showTab('dir','escuelas',this)">🏫 Escuelas</button>
+    <button class="tab" onclick="showTab('dir','circos',this)">🎪 Circos</button>
+    <button class="tab" onclick="showTab('dir','festivales',this)">🎡 Festivales</button>
+  </div>
+
+  <div id="dir-hoteles" class="tab-panel active">
+    <div class="protect"><strong>Estrategia:</strong> Pide siempre hablar con el depto. de <strong>Banquetes & Eventos</strong>. Lleva el video del show. Propón fecha específica desde el primer contacto.</div>
+    <div style="overflow-x:auto">
+    <table class="contact-table">
+      <thead><tr><th>Nombre</th><th>Zona</th><th>Teléfono</th><th>Email / Web</th><th>Contacto clave</th><th>Prioridad</th></tr></thead>
+      <tbody>
+        <tr><td><strong>NH México City Valle Dorado</strong></td><td>Tlalnepantla</td><td>55 1940-3770</td><td><a href="mailto:nhvalledorado@nh-hotels.com">nhvalledorado@nh-hotels.com</a></td><td>Coordinador de Eventos</td><td><span class="tag tag-green">Alta</span></td></tr>
+        <tr><td><strong>Hotel & Villas Atizapán</strong></td><td>Atizapán</td><td>—</td><td><a href="https://hotelatizapan.com.mx" target="_blank">hotelatizapan.com.mx</a></td><td>Gerencia General</td><td><span class="tag tag-green">Alta</span></td></tr>
+        <tr><td><strong>Camino Real Polanco</strong></td><td>Polanco CDMX</td><td>Conmutador principal</td><td><a href="https://www.grupocaminoreal.com" target="_blank">grupocaminoreal.com</a></td><td>Depto. Banquetes</td><td><span class="tag tag-gold">Media</span></td></tr>
+        <tr><td><strong>Camino Real Pedregal</strong></td><td>Pedregal CDMX</td><td>Conmutador principal</td><td><a href="https://www.grupocaminoreal.com" target="_blank">grupocaminoreal.com</a></td><td>Depto. Banquetes</td><td><span class="tag tag-gold">Media</span></td></tr>
+        <tr><td><strong>Teatro Royal Pedregal</strong></td><td>Sur CDMX</td><td>—</td><td><a href="https://www.teatroroyalpedregal.com" target="_blank">teatroroyalpedregal.com</a></td><td>Área de Programación</td><td><span class="tag tag-green">Alta</span></td></tr>
+        <tr><td><strong>Hotel Real del Bosque</strong></td><td>CDMX</td><td>—</td><td><a href="https://realdelbosque.com" target="_blank">realdelbosque.com</a></td><td>Eventos y Grupos</td><td><span class="tag tag-muted">Baja</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div id="dir-gobierno" class="tab-panel">
+    <div class="protect"><strong>Estrategia:</strong> Lleva expediente completo. Menciona CNA, Palacio Postal e INBAL. Solicita ser incluido en el padrón de proveedores culturales. Un solo contacto puede abrir la puerta a 3-6 funciones anuales.</div>
+    <div style="overflow-x:auto">
+    <table class="contact-table">
+      <thead><tr><th>Dependencia</th><th>Zona</th><th>Teléfono</th><th>Email</th><th>Contacto</th><th>Prioridad</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Subdirección de Cultura Atizapán</strong></td><td>Atizapán</td><td>55 2121-3604</td><td><a href="mailto:culturayarte.atizapan@gmail.com">culturayarte.atizapan@gmail.com</a></td><td>Mtro. Edgar Rainier Palacios</td><td><span class="tag tag-green">🔥 Urgente</span></td></tr>
+        <tr><td><strong>Presidencia Municipal Atizapán</strong></td><td>Atizapán</td><td>55 3622-2909</td><td><a href="mailto:cae@atizapan.gob.mx">cae@atizapan.gob.mx</a></td><td>Desarrollo Social / Cultura</td><td><span class="tag tag-green">Alta</span></td></tr>
+        <tr><td><strong>Centro Regional de Cultura Atizapán</strong></td><td>Atizapán</td><td>55 5370-9879</td><td><a href="mailto:atizapanimc@yahoo.com.mx">atizapanimc@yahoo.com.mx</a></td><td>Dirección del Centro</td><td><span class="tag tag-green">Alta</span></td></tr>
+        <tr><td><strong>Festival Atzán</strong></td><td>Intermunicipal</td><td>55 2121-3604</td><td>Vía Cultura Atizapán</td><td>Comité Organizador</td><td><span class="tag tag-gold">Media</span></td></tr>
+        <tr><td><strong>FECIJ · INBAL</strong></td><td>CDMX Nacional</td><td>—</td><td><a href="https://inbal.mx" target="_blank">inbal.mx</a></td><td>Dirección Artística FECIJ</td><td><span class="tag tag-green">Alta</span></td></tr>
+        <tr><td><strong>Dir. Cultura Alcaldía Cuauhtémoc</strong></td><td>CDMX</td><td>—</td><td><a href="https://cuauhtemoc.cdmx.gob.mx" target="_blank">cuauhtemoc.cdmx.gob.mx</a></td><td>Dirección de Cultura</td><td><span class="tag tag-gold">Media</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div id="dir-empresas" class="tab-panel">
+    <div class="protect"><strong>Estrategia:</strong> Contactar en LinkedIn a "Gerente de RH" o "Coordinador de Eventos". Las mejores fechas: Día del Niño, Día de la Madre, Posadas, aniversarios de empresa. Siempre cotizar con IVA separado.</div>
+    <div style="overflow-x:auto">
+    <table class="contact-table">
+      <thead><tr><th>Empresa</th><th>Zona</th><th>Canal</th><th>Contacto clave</th><th>Fecha ideal</th><th>Presupuesto est.</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Kellogg's México</strong></td><td>Tlalnepantla</td><td>LinkedIn + web</td><td>RH / Bienestar Laboral</td><td>Día del Niño</td><td><span class="tag tag-green">$30K–$60K</span></td></tr>
+        <tr><td><strong>Jumex</strong></td><td>Ecatepec</td><td>LinkedIn</td><td>Coordinador de Eventos</td><td>Día del Niño / Posadas</td><td><span class="tag tag-gold">$20K–$45K</span></td></tr>
+        <tr><td><strong>Grupo Bimbo</strong></td><td>Azcapotzalco</td><td>LinkedIn</td><td>Dir. Comunicación Interna</td><td>Día de la Madre / Posadas</td><td><span class="tag tag-green">$40K–$80K</span></td></tr>
+        <tr><td><strong>Plaza Satélite / Punta Norte</strong></td><td>Naucalpan</td><td>Directo a Marketing</td><td>Gerente de Marketing</td><td>Día del Niño / Navidad</td><td><span class="tag tag-gold">$15K–$30K</span></td></tr>
+        <tr><td><strong>Mundo E</strong></td><td>Tlalnepantla</td><td>Gerencia de plaza</td><td>Área de Marketing</td><td>Fines de semana</td><td><span class="tag tag-gold">$12K–$25K</span></td></tr>
+        <tr><td><strong>Agencias de Eventos Privados</strong></td><td>CDMX</td><td>bodas.com.mx</td><td>Director de Producción</td><td>Todo el año</td><td><span class="tag tag-gold">Comisión 15%</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div id="dir-escuelas" class="tab-panel">
+    <div class="protect"><strong>Estrategia:</strong> Hablar directo con el Director o Coordinador Académico. Video por WhatsApp primero. Precio grupal por colegio o por alumno. Meta: 15 colegios contactados esta semana.</div>
+    <div style="overflow-x:auto">
+    <table class="contact-table">
+      <thead><tr><th>Canal</th><th>Zona</th><th>Cómo contactar</th><th>Precio sugerido</th><th>Fecha ideal</th><th>Notas</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Colegios privados primaria</strong></td><td>Atizapán / Tlalnepantla</td><td>Google Maps + llamada directa</td><td>$8K–$15K función completa</td><td>Día del Niño / Clausura</td><td>Hablar con Director</td></tr>
+        <tr><td><strong>Colegios privados secundaria/prepa</strong></td><td>Zona norte CDMX</td><td>Google Maps + LinkedIn</td><td>$12K–$20K</td><td>Día del Niño / Inicio ciclo</td><td>Show más intenso</td></tr>
+        <tr><td><strong>Supervisiones Escolares SEP</strong></td><td>Atizapán / Tlalnepantla</td><td>Visita directa</td><td>$6K–$10K por escuela</td><td>Festividades escolares</td><td>1 supervisor = 10-15 escuelas</td></tr>
+        <tr><td><strong>UNITEC / UTVM / ICEL Norte</strong></td><td>Tlalnepantla / Satélite</td><td>Coord. Cultura y Difusión</td><td>$15K–$25K</td><td>Inicio/fin semestre</td><td>Público teen = fans K-pop</td></tr>
+        <tr><td><strong>Academias de K-pop / Danza</strong></td><td>CDMX general</td><td>Instagram + DM directo</td><td>Alianza / canje + comisión</td><td>Todo el año</td><td>Alianza ideal, audiencia exacta</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div id="dir-circos" class="tab-panel">
+    <div class="protect"><strong>Estrategia:</strong> Contactar a Dirección Artística. Proponer acto especial de temporada. Show K-pop es diferenciador para circos que buscan público joven.</div>
+    <div style="overflow-x:auto">
+    <table class="contact-table">
+      <thead><tr><th>Venue</th><th>Zona</th><th>Web / Contacto</th><th>Caché est.</th><th>Notas</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Kidzania CDMX</strong></td><td>Santa Fe CDMX</td><td><a href="https://cdmx.kidzania.com" target="_blank">cdmx.kidzania.com</a></td><td>$15K–$25K</td><td>Área de Entretenimiento</td></tr>
+        <tr><td><strong>Six Flags CDMX</strong></td><td>Tlalpan CDMX</td><td><a href="https://www.sixflags.com.mx" target="_blank">sixflags.com.mx</a></td><td>$20K–$40K</td><td>Shows de temporada para teens</td></tr>
+        <tr><td><strong>Circo Atayde Hermanos</strong></td><td>Gira Nacional</td><td><a href="https://www.circoatayde.com.mx" target="_blank">circoatayde.com.mx</a></td><td>$15K–$30K</td><td>Acto especial de temporada</td></tr>
+        <tr><td><strong>Shows Itinerantes Familiares</strong></td><td>CDMX Metro</td><td>Google + productoras</td><td>$10K–$20K</td><td>Registro como proveedor de acto</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div id="dir-festivales" class="tab-panel">
+    <div class="protect"><strong>Estrategia:</strong> Postular con 3-4 meses de anticipación. Dossier + carta de intención + video. Mencionar CNA, Palacio Postal e INBAL. Negociar visibilidad además del caché.</div>
+    <div style="overflow-x:auto">
+    <table class="contact-table">
+      <thead><tr><th>Festival</th><th>Zona</th><th>Temporada</th><th>Web</th><th>Caché est.</th><th>Prioridad</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Feria Nacional de León</strong></td><td>León, Gto.</td><td>Enero–Feb</td><td><a href="https://www.feria.com.mx" target="_blank">feria.com.mx</a></td><td>$20K–$50K</td><td><span class="tag tag-gold">Media</span></td></tr>
+        <tr><td><strong>Feria de Puebla</strong></td><td>Puebla</td><td>Abr–May</td><td><a href="https://www.feriadepuebla.com" target="_blank">feriadepuebla.com</a></td><td>$15K–$35K</td><td><span class="tag tag-gold">Media</span></td></tr>
+        <tr><td><strong>Cumbre Tajín</strong></td><td>Papantla, Ver.</td><td>Marzo</td><td><a href="https://www.cumbretajin.com" target="_blank">cumbretajin.com</a></td><td>$12K–$25K</td><td><span class="tag tag-gold">Media</span></td></tr>
+        <tr><td><strong>Convenciones K-pop / Anime CDMX</strong></td><td>CDMX</td><td>Todo el año</td><td>Facebook grupos</td><td>$8K–$20K</td><td><span class="tag tag-green">Alta</span></td></tr>
+        <tr><td><strong>Festival Internacional Cervantino</strong></td><td>Guanajuato</td><td>Octubre</td><td><a href="https://www.festivalcervantino.gob.mx" target="_blank">festivalcervantino.gob.mx</a></td><td>$25K–$60K</td><td><span class="tag tag-gold">Postular enero</span></td></tr>
+        <tr><td><strong>Ferias de Barrio · Alcaldías CDMX</strong></td><td>CDMX</td><td>Todo el año</td><td>Dirección Cultura alcaldía</td><td>$8K–$20K</td><td><span class="tag tag-green">Alta</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANEL: CORREOS
+══════════════════════════════════════ -->
+
+<div id="panel-correos" class="panel">
+  <div class="eyebrow">Comunicación</div>
+  <div class="section-title">CUERPOS DE CORREO Y WHATSAPP</div>
+  <div class="section-sub">Copia, personaliza con el nombre del cliente y envía. El [campo] indica lo que debes reemplazar.</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('mail','hotel-mail',this)">Hotel</button>
+    <button class="tab" onclick="showTab('mail','empresa-mail',this)">Empresa</button>
+    <button class="tab" onclick="showTab('mail','escuela-mail',this)">Escuela</button>
+    <button class="tab" onclick="showTab('mail','gobierno-mail',this)">Gobierno</button>
+    <button class="tab" onclick="showTab('mail','festival-mail',this)">Festival</button>
+    <button class="tab" onclick="showTab('mail','seguimiento-mail',this)">Seguimiento</button>
+    <button class="tab" onclick="showTab('mail','cierre-mail',this)">Cierre</button>
+  </div>
+
+  <div id="mail-hotel-mail" class="tab-panel active">
+    <div class="script-block">
+      <div class="script-block-label">📧 EMAIL INICIAL · Hotel <button class="copy-btn" onclick="copyScript('sc-hotel-email')">COPIAR</button></div>
+      <div class="script-content" id="sc-hotel-email">Asunto: Entretenimiento en vivo para [Nombre del Hotel] — Studio B
+
+Estimado/a [Nombre del coordinador de eventos]:
+
+Me dirijo a usted porque el Hotel [X] es reconocido por la calidad de su servicio al huésped — y quiero presentarles algo que puede elevar aún más esa experiencia.
+
+Somos <strong>Studio B</strong>, una compañía de espectáculos profesionales con sede en CDMX y Atizapán. Nuestro elenco está formado en el INBAL y hemos presentado producciones en el <strong>Palacio Postal, el Centro Nacional de las Artes (Sala Blas Galindo), La Casa del Cine y el Teatro SME</strong>, además de colaborar con directores respaldados por Netflix e INBA.
+
+Producimos shows de <strong>K-pop, ópera y teatro musical</strong> con producción completa: 8 performers en escena, iluminación profesional y efectos de humo. El cliente no organiza nada — nosotros llegamos, montamos y presentamos.
+
+Les comparto nuestro video de producción: [LINK]
+
+¿Tienen algún evento próximo — convenciones, temporadas especiales, fines de semana — donde un show en vivo pudiera ser un diferenciador? Me encantaría agendar 15 minutos para platicar.
+
+Quedo a sus órdenes,
+<strong>Gerard Estrada</strong>
+Director Artístico · Studio B
+[teléfono] · [correo]</div>
+</div>
+<div class="script-block">
+<div class="script-block-label">📞 GUIÓN LLAMADA DE SEGUIMIENTO · Hotel <button class="copy-btn" onclick="copyScript('sc-hotel-call')">COPIAR</button></div>
+<div class="script-content" id="sc-hotel-call">“Hola [nombre], soy [asistente] de Studio B, le escribimos hace un par de días sobre entretenimiento en vivo para el hotel. ¿Tiene dos minutos?
+
+Le llamamos porque estamos programando nuestra agenda para los próximos meses y queríamos saber si tienen eventos especiales planeados — Día de la Madre, convenciones, posadas, temporada de verano — donde un show en vivo pudiera ser una opción.
+
+No tiene que ser algo grande. A veces una función de 45 minutos en el lobby o en un salón convierte una estancia ordinaria en algo que los huéspedes comparten en redes.
+
+¿Qué tipo de eventos manejan normalmente?”</div>
+</div>
+
+  </div>
+
+  <div id="mail-empresa-mail" class="tab-panel">
+    <div class="script-block">
+      <div class="script-block-label">💼 LINKEDIN / EMAIL · Recursos Humanos <button class="copy-btn" onclick="copyScript('sc-rh')">COPIAR</button></div>
+      <div class="script-content" id="sc-rh">Asunto: Show en vivo para el Día del Niño / eventos de bienestar — Studio B
+
+Hola [Nombre],
+
+Vi que coordinas el área de Recursos Humanos en [Empresa]. Te escribo porque trabajamos con empresas de la zona norte en sus eventos de bienestar laboral y quería presentarte algo diferente.
+
+Producimos shows en vivo de <strong>K-pop, ópera y teatro musical</strong> — con elenco profesional del INBAL, producción completa y sin que RH tenga que organizar nada. Nos presentamos en el Palacio Postal, el CNA y colaboramos con directores respaldados por Netflix.
+
+Funcionamos muy bien para <strong>Día del Niño, Día de la Madre, aniversarios de empresa y posadas</strong>. El formato es llave en mano: llegamos, montamos y presentamos.
+
+¿Tienen algo planeado para los próximos meses? Con gusto les comparto lo que hemos hecho para otras empresas: [LINK VIDEO]
+
+[Tu nombre]
+Studio B · [teléfono]</div>
+</div>
+<div class="script-block">
+<div class="script-block-label">💬 WHATSAPP · Contacto corporativo <button class="copy-btn" onclick="copyScript('sc-empresa-wa')">COPIAR</button></div>
+<div class="script-content" id="sc-empresa-wa">Hola [Nombre], soy [nombre] de Studio B 🎤
+
+Producimos shows de K-pop y ópera para eventos corporativos — elenco profesional INBAL, luces y efectos de humo, todo incluido.
+
+Hemos estado en el Palacio Postal y el CNA. Les comparto el video: [LINK]
+
+¿Tienen algo planeado para el Día del Niño o las posadas? ¡Con gusto les cotizamos!</div>
+</div>
+
+  </div>
+
+  <div id="mail-escuela-mail" class="tab-panel">
+    <div class="script-block">
+      <div class="script-block-label">📱 WHATSAPP · Director de escuela <button class="copy-btn" onclick="copyScript('sc-escuela-wa')">COPIAR</button></div>
+      <div class="script-content" id="sc-escuela-wa">Buenas tardes [Nombre]. Le escribo de Studio B, compañía de espectáculos profesional con sede en CDMX. 🎤
+
+Producimos un show de K-pop con 8 bailarines, luces y efectos especiales — diseñado especialmente para niños y jóvenes. Ya lo hemos presentado en el Teatro SME y la Librería Rosario Castellanos.
+
+Le comparto el video: [LINK]
+
+Tenemos disponibilidad para funciones escolares en [mes]. El show dura 45 minutos, viene todo incluido y los niños quedan encantados.
+
+¿Podría ser de interés para algún evento del colegio? Con gusto le envío más información y precios.</div>
+</div>
+<div class="script-block">
+<div class="script-block-label">📧 EMAIL FORMAL · Colegio privado <button class="copy-btn" onclick="copyScript('sc-escuela-email')">COPIAR</button></div>
+<div class="script-content" id="sc-escuela-email">Asunto: Propuesta de espectáculo artístico para [Nombre del Colegio] — Studio B
+
+Estimado/a [Nombre del Director/a]:
+
+Por medio de la presente, Studio B — compañía de artes escénicas con sede en CDMX — se dirige a usted para presentar una propuesta de entretenimiento artístico para su comunidad escolar.
+
+Producimos un espectáculo de <strong>K-pop con elementos de teatro y clown</strong>, especialmente diseñado para niños y jóvenes. Nuestro elenco de 8 performers está formado profesionalmente en el INBAL. La función incluye producción completa de luces y efectos.
+
+<strong>Duración:</strong> 30-45 minutos
+<strong>Modalidad:</strong> En las instalaciones del colegio o en teatro
+<strong>Incluye:</strong> Elenco, equipo técnico, montaje y desmontaje
+
+Les adjunto nuestro dossier artístico y quedamos a sus órdenes para una reunión o llamada donde podamos presentar la propuesta con más detalle.
+
+Atentamente,
+<strong>Gerard Estrada</strong>
+Director Artístico · Studio B
+[teléfono] · [correo]</div>
+</div>
+
+  </div>
+
+  <div id="mail-gobierno-mail" class="tab-panel">
+    <div class="script-block">
+      <div class="script-block-label">📧 CARTA FORMAL · Dirección de Cultura <button class="copy-btn" onclick="copyScript('sc-gobierno-email')">COPIAR</button></div>
+      <div class="script-content" id="sc-gobierno-email">Asunto: Propuesta de espectáculo artístico — Studio B / Gerard Estrada
+
+Estimado Mtro./Mtra. [Nombre] / Dirección de Cultura [Municipio/Alcaldía]:
+
+Por medio de la presente, Studio B — compañía de artes escénicas con sedes en CDMX y Atizapán de Zaragoza — se dirige a usted para presentar su oferta de espectáculos para la programación cultural del municipio.
+
+Contamos con producciones en los géneros de <strong>K-pop, ópera, teatro musical y clown</strong>, con elenco formado en el INBAL y el Conservatorio Nacional. Hemos presentado producciones en el <strong>Palacio Postal, la Sala Blas Galindo del CNA, La Casa del Cine y el Teatro SME</strong>, además de colaborar con directores respaldados por Netflix e INBA.
+
+Nuestras producciones incluyen equipo técnico completo y son de carácter llave en mano.
+
+Adjuntamos nuestro dossier artístico y estamos a sus órdenes para una reunión donde podamos explorar las posibilidades de colaboración para la programación de [Festival / Temporada específica].
+
+Atentamente,
+<strong>Gerard Estrada</strong>
+Director Artístico · Studio B
+Doble licenciatura ENAT-INBAL / ESM-INBAL
+[teléfono] · [correo]</div>
+</div>
+
+  </div>
+
+  <div id="mail-festival-mail" class="tab-panel">
+    <div class="script-block">
+      <div class="script-block-label">📧 CARTA DE INTENCIÓN · Festival / Feria <button class="copy-btn" onclick="copyScript('sc-festival-email')">COPIAR</button></div>
+      <div class="script-content" id="sc-festival-email">Asunto: Propuesta artística para [Nombre del Festival] — Studio B
+
+Estimado/a equipo curatorial de [Festival]:
+
+Me dirijo a ustedes con el propósito de presentar a <strong>Studio B</strong> como propuesta artística para la programación de [Festival/edición/año].
+
+Studio B es una compañía de producción escénica profesional dirigida por el tenor y director Gerard Estrada, con doble licenciatura del INBAL. Nuestra propuesta combina rigor académico con impacto visual de alto nivel.
+
+<strong>Producción disponible:</strong>
+— K-pop Tribute: 8 performers, producción completa, 45-60 min
+— Confesiones de Ópera: teatro musical interdisciplinario, 60 min
+— Recital íntimo: tenor + piano, formato flexible
+
+<strong>Presentaciones previas:</strong> Palacio Postal · CNA Sala Blas Galindo · La Casa del Cine · Teatro SME · Colaboración con directores Netflix/INBA
+
+Adjuntamos dossier artístico completo y video de producción: [LINK]
+
+Quedamos a sus órdenes para cualquier información adicional.
+
+<strong>Gerard Estrada</strong>
+Director Artístico · Studio B
+[teléfono] · [correo]</div>
+</div>
+
+  </div>
+
+  <div id="mail-seguimiento-mail" class="tab-panel">
+    <div class="script-block">
+      <div class="script-block-label">📧 SEGUIMIENTO DÍA 3 — Sin respuesta <button class="copy-btn" onclick="copyScript('sc-seg3')">COPIAR</button></div>
+      <div class="script-content" id="sc-seg3">Asunto: Re: Entretenimiento en vivo — Studio B
+
+Hola [Nombre],
+
+Le escribo brevemente para dar seguimiento a mi mensaje anterior.
+
+Quería compartirles también que además del K-pop, contamos con producciones de ópera y teatro musical — por si el perfil de su evento es más de ese estilo.
+
+¿Tendría 10 minutos esta semana para una llamada rápida? Podemos ajustar el formato exactamente a lo que necesitan.
+
+[Tu nombre] · Studio B · [teléfono]</div>
+</div>
+<div class="script-block">
+<div class="script-block-label">📧 SEGUIMIENTO DÍA 7 — Con novedad <button class="copy-btn" onclick="copyScript('sc-seg7')">COPIAR</button></div>
+<div class="script-content" id="sc-seg7">Asunto: Algo nuevo de Studio B que creo les interesa
+
+Hola [Nombre],
+
+Le comparto algo nuevo: acabamos de [mencionar una presentación reciente, nota de prensa, foto del show, reseña].
+
+Seguimos con disponibilidad para [mes]. Nuestra agenda se está llenando para esa temporada y quería darles prioridad antes de confirmar con otros clientes.
+
+¿Podemos hablar esta semana?
+
+[Tu nombre] · Studio B · [teléfono]</div>
+</div>
+<div class="script-block">
+<div class="script-block-label">📧 SEGUIMIENTO DÍA 14 — Última llamada <button class="copy-btn" onclick="copyScript('sc-seg14')">COPIAR</button></div>
+<div class="script-content" id="sc-seg14">Asunto: Última disponibilidad — [mes] Studio B
+
+Hola [Nombre],
+
+Le escribo por última vez sobre la disponibilidad de [mes]. Tenemos una fecha que se está definiendo esta semana y quería ofrecérsela a ustedes primero antes de confirmarla con otro cliente.
+
+Si en este momento no es el momento adecuado, con gusto les contactamos para la siguiente temporada. Solo dígame y lo agendo.
+
+Gracias por su tiempo.
+
+[Tu nombre] · Studio B · [teléfono]</div>
+</div>
+
+  </div>
+
+  <div id="mail-cierre-mail" class="tab-panel">
+    <div class="script-block">
+      <div class="script-block-label">💬 FRASE DE CIERRE — Con urgencia <button class="copy-btn" onclick="copyScript('sc-cierre1')">COPIAR</button></div>
+      <div class="script-content" id="sc-cierre1">"Para reservar la fecha necesitamos formalizar con el 50% de anticipo. ¿Prefieren que les envíe el contrato hoy o mañana? Tenemos otra solicitud para esa misma fecha y necesito confirmarlo antes del viernes."</div>
+    </div>
+    <div class="script-block">
+      <div class="script-block-label">💬 FRASE DE CIERRE — Con alternativa <button class="copy-btn" onclick="copyScript('sc-cierre2')">COPIAR</button></div>
+      <div class="script-content" id="sc-cierre2">"¿Prefieren la función en la mañana o en la tarde? ¿El viernes o el sábado? Dígame cuál les funciona mejor y les separo la fecha."</div>
+    </div>
+    <div class="script-block">
+      <div class="script-block-label">💬 RESPUESTA A "necesito consultarlo" <button class="copy-btn" onclick="copyScript('sc-cierre3')">COPIAR</button></div>
+      <div class="script-content" id="sc-cierre3">"Claro, con gusto les preparo un resumen ejecutivo de una página para que sea fácil presentarlo internamente. ¿Cuándo tendría esa conversación? Para poder darles seguimiento en el momento correcto y no perder la fecha disponible."</div>
+    </div>
+    <div class="script-block">
+      <div class="script-block-label">💬 RESPUESTA A "está muy caro" <button class="copy-btn" onclick="copyScript('sc-cierre4')">COPIAR</button></div>
+      <div class="script-content" id="sc-cierre4">"Entiendo. ¿Comparado con qué alternativa? Lo que incluimos son 8 performers profesionales del INBAL, equipo completo de luces y efectos. Si dividimos el costo entre sus asistentes, estamos hablando de [X] pesos por persona por una experiencia que van a recordar meses. ¿Qué presupuesto manejan? Podemos encontrar un formato que funcione."</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANEL: TRATOS
+══════════════════════════════════════ -->
+
+<div id="panel-tratos" class="panel">
+  <div class="eyebrow">Negociación</div>
+  <div class="section-title">ESTRUCTURAS DE TRATO</div>
+  <div class="section-sub">Términos, modelos de pago y qué se negocia con cada tipo de cliente.</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('trato','t-hotel',this)">Hotel</button>
+    <button class="tab" onclick="showTab('trato','t-empresa',this)">Empresa</button>
+    <button class="tab" onclick="showTab('trato','t-gobierno',this)">Gobierno</button>
+    <button class="tab" onclick="showTab('trato','t-escuela',this)">Escuela</button>
+    <button class="tab" onclick="showTab('trato','t-taquilla',this)">Taquilla</button>
+    <button class="tab" onclick="showTab('trato','t-privado',this)">Privado</button>
+  </div>
+
+  <div id="trato-t-hotel" class="tab-panel active">
+    <div class="grid-4" style="margin-bottom:20px">
+      <div class="kpi"><div class="kpi-val">50%</div><div class="kpi-label">Anticipo al firmar</div></div>
+      <div class="kpi"><div class="kpi-val">50%</div><div class="kpi-label">Saldo día del show</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#2ECC71">$15K–40K</div><div class="kpi-label">Rango de caché</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#E74C3C">100%</div><div class="kpi-label">Anticipo si cancela</div></div>
+    </div>
+    <div class="protect"><strong>Estructura:</strong> Caché fijo. El hotel paga sin importar cuántos huéspedes asistan. El riesgo de asistencia es del hotel, no tuyo.</div>
+    <div class="protect"><strong>Incluye:</strong> Elenco + luces + humo + sonido + montaje + función + desmontaje. Segunda función mismo día = 70% adicional.</div>
+    <div class="danger"><strong>Pide explícitamente:</strong> Acceso 3 hrs antes para montaje · Espacio mínimo 6×4m · Camerino o habitación · Estacionamiento para 2 vehículos.</div>
+    <div class="danger"><strong>Derechos de imagen:</strong> El hotel puede fotografiar mencionando a Studio B. Si quieren exclusividad = +15% al caché.</div>
+  </div>
+
+  <div id="trato-t-empresa" class="tab-panel">
+    <div class="grid-4" style="margin-bottom:20px">
+      <div class="kpi"><div class="kpi-val">30–50%</div><div class="kpi-label">Anticipo al aprobar</div></div>
+      <div class="kpi"><div class="kpi-val">+16%</div><div class="kpi-label">IVA siempre aparte</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#2ECC71">$20K–60K</div><div class="kpi-label">Rango de caché</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#5DADE2">15 días</div><div class="kpi-label">Máx. para liquidar</div></div>
+    </div>
+    <div class="protect"><strong>Modelo recomendado:</strong> Todo incluido llave en mano. Un precio, sin desglose. Justifica precio más alto y les quita estrés de coordinar.</div>
+    <div class="danger"><strong>Trampa frecuente:</strong> "Te pagamos después del evento sin fecha." Siempre fecha específica en el contrato. Interés del 5% mensual si se retrasan.</div>
+    <div class="protect"><strong>Tip de precio:</strong> Pregunta primero "¿cuánto han invertido en eventos similares?" Eso te dice tu techo. Empresas grandes = $80K–$150K de presupuesto.</div>
+  </div>
+
+  <div id="trato-t-gobierno" class="tab-panel">
+    <div class="grid-4" style="margin-bottom:20px">
+      <div class="kpi"><div class="kpi-val">30%</div><div class="kpi-label">Anticipo al inicio</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#E74C3C">30–90d</div><div class="kpi-label">Tiempo de pago</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#2ECC71">$10K–25K</div><div class="kpi-label">Caché típico</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#5DADE2">Orden</div><div class="kpi-label">de Servicio obligatoria</div></div>
+    </div>
+    <div class="danger"><strong>Documento clave:</strong> Orden de Servicio firmada y sellada ANTES de montar. Sin ella no puedes facturar ni cobrar. Exígela siempre.</div>
+    <div class="protect"><strong>Ventaja:</strong> Una vez en el padrón de proveedores, te contratan 3–6 veces al año en distintas fechas automáticamente.</div>
+    <div class="danger"><strong>No entres barato.</strong> El gobierno te registra al precio que entraste. Ese precio se vuelve tu techo permanente.</div>
+    <div class="protect"><strong>Ofrece cobertura mediática:</strong> "Documentamos el evento para sus redes institucionales." Eso vale mucho para el funcionario y cuesta poco para ti.</div>
+  </div>
+
+  <div id="trato-t-escuela" class="tab-panel">
+    <div class="grid-4" style="margin-bottom:20px">
+      <div class="kpi"><div class="kpi-val">50%</div><div class="kpi-label">Anticipo al confirmar</div></div>
+      <div class="kpi"><div class="kpi-val">50%</div><div class="kpi-label">Saldo día del show</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#2ECC71">$8K–20K</div><div class="kpi-label">Caché por función</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#5DADE2">$180–220</div><div class="kpi-label">Por alumno si van al teatro</div></div>
+    </div>
+    <div class="protect"><strong>Modelo más rentable:</strong> 3 colegios el mismo día en el mismo espacio = $10K cada uno = $30K con un solo montaje. Ofrece el descuento grupal activamente.</div>
+    <div class="protect"><strong>Incentivo al director:</strong> El docente o coordinador que cierra el trato obtiene 2 boletos de cortesía o una comisión del 5%. Eso acelera la decisión.</div>
+  </div>
+
+  <div id="trato-t-taquilla" class="tab-panel">
+    <div class="grid-4" style="margin-bottom:20px">
+      <div class="kpi"><div class="kpi-val">30%</div><div class="kpi-label">Preventa mínima antes de confirmar</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#E74C3C">40–50%</div><div class="kpi-label">Aforo para punto de equilibrio</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#2ECC71">60–70%</div><div class="kpi-label">Tu parte en taquilla compartida</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#5DADE2">3–8%</div><div class="kpi-label">Comisión plataforma de pago</div></div>
+    </div>
+    <div class="danger"><strong>Regla de oro:</strong> No confirmes la renta del teatro hasta tener el 30% de los boletos vendidos en preventa. Ese dinero en caja es tu seguro.</div>
+    <div class="protect"><strong>Modelo taquilla compartida:</strong> Venue aporta el espacio sin costo + tú das 30–40% de la taquilla. CPN: Librería Rosario Castellanos ya funciona así. Replica con La Casa del Cine y galerías.</div>
+  </div>
+
+  <div id="trato-t-privado" class="tab-panel">
+    <div class="grid-4" style="margin-bottom:20px">
+      <div class="kpi"><div class="kpi-val">50%</div><div class="kpi-label">Anticipo NO reembolsable</div></div>
+      <div class="kpi"><div class="kpi-val">50%</div><div class="kpi-label">Saldo antes de iniciar show</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#2ECC71">$15K–70K</div><div class="kpi-label">Rango según evento</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#E74C3C">+$5–12K</div><div class="kpi-label">Número sorpresa add-on</div></div>
+    </div>
+    <div class="protect"><strong>Diferenciador:</strong> Ofrece una canción personalizada (ópera o K-pop) dedicada a la festejada con su nombre. No tiene precio para el cliente y es 30 min de preparación extra.</div>
+    <div class="protect"><strong>Add-ons que suman:</strong> Número sorpresa +$5–12K · Meet & greet +$3–5K · Fotografía del evento (comisión 15% del fotógrafo).</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANEL: CONTRATOS
+══════════════════════════════════════ -->
+
+<div id="panel-contratos" class="panel">
+  <div class="eyebrow">Documentación</div>
+  <div class="section-title">CONTRATOS BÁSICOS</div>
+  <div class="section-sub">Llena los campos en amarillo y copia el texto para enviar por correo o imprimir.</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('cont','c-general',this)">General / Caché Fijo</button>
+    <button class="tab" onclick="showTab('cont','c-escuela',this)">Escolar</button>
+    <button class="tab" onclick="showTab('cont','c-taquilla',this)">Taquilla Compartida</button>
+  </div>
+
+  <!-- GENERADOR -->
+
+  <div id="cont-c-general" class="tab-panel active">
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-accent"></div>
+      <div class="card-title" style="margin-bottom:16px">Datos del contrato</div>
+      <div class="form-row">
+        <div><label>Cliente (persona/empresa)</label><input type="text" id="cg-cliente" placeholder="Nombre del cliente" oninput="updateContract()"></div>
+        <div><label>Representante del cliente</label><input type="text" id="cg-rep" placeholder="Nombre del representante" oninput="updateContract()"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Evento / Tipo de show</label><input type="text" id="cg-evento" placeholder="K-pop Tribute / Confesiones de Ópera..." oninput="updateContract()"></div>
+        <div><label>Fecha del evento</label><input type="date" id="cg-fecha" oninput="updateContract()"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Horario</label><input type="text" id="cg-hora" placeholder="ej. 19:00 hrs" oninput="updateContract()"></div>
+        <div><label>Lugar / Venue</label><input type="text" id="cg-lugar" placeholder="Nombre y dirección" oninput="updateContract()"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Caché total (MXN)</label><input type="number" id="cg-cache" placeholder="20000" oninput="updateContract()"></div>
+        <div><label>Anticipo (MXN)</label><input type="number" id="cg-anticipo" placeholder="10000" oninput="updateContract()"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Duración del show</label><input type="text" id="cg-duracion" placeholder="45 minutos" oninput="updateContract()"></div>
+        <div><label>Ciudad, fecha firma</label><input type="text" id="cg-ciudad" placeholder="CDMX, mayo 2025" oninput="updateContract()"></div>
+      </div>
+    </div>
+
+```
+<div class="contract-area" id="contract-output">
+  <h3>CONTRATO DE SERVICIOS ARTÍSTICOS</h3>
+  <p>Que celebran por una parte <strong>Studio B Producción Escénica</strong>, representado por el C. <strong>Gerard Estrada</strong>, en calidad de Director Artístico (en adelante "EL PRESTADOR"), y por la otra parte <strong id="co-cliente">[CLIENTE]</strong>, representado por <strong id="co-rep">[REPRESENTANTE]</strong> (en adelante "EL CLIENTE").</p>
+
+  <h3>PRIMERA — OBJETO</h3>
+  <p>EL PRESTADOR se compromete a proporcionar los servicios artísticos consistentes en la presentación de <strong id="co-evento">[TIPO DE SHOW]</strong>, el día <strong id="co-fecha">[FECHA]</strong> a las <strong id="co-hora">[HORARIO]</strong> hrs, en el inmueble ubicado en <strong id="co-lugar">[VENUE Y DIRECCIÓN]</strong>.</p>
+  <p>La duración del espectáculo será de aproximadamente <strong id="co-duracion">[DURACIÓN]</strong>.</p>
+
+  <h3>SEGUNDA — CACHÉ ARTÍSTICO</h3>
+  <p>EL CLIENTE pagará a EL PRESTADOR la cantidad de <strong id="co-cache">$[CACHÉ]</strong> MXN (más IVA si aplica) como caché por los servicios artísticos descritos.</p>
+  <p><strong>Forma de pago:</strong></p>
+  <p>— Anticipo no reembolsable: <strong id="co-anticipo">$[ANTICIPO]</strong> MXN al momento de la firma de este contrato.</p>
+  <p>— Liquidación: El saldo restante de <strong id="co-saldo">$[SALDO]</strong> MXN deberá ser entregado a EL PRESTADOR el mismo día del evento, <strong>antes del inicio de la presentación</strong>.</p>
+
+  <h3>TERCERA — OBLIGACIONES DE EL PRESTADOR</h3>
+  <p>EL PRESTADOR se compromete a: presentarse puntualmente en el venue con un mínimo de 3 horas de anticipación para montaje; proveer elenco completo, equipo de iluminación, efectos de humo y sonido; y llevar a cabo la presentación en los términos acordados.</p>
+
+  <h3>CUARTA — OBLIGACIONES DE EL CLIENTE</h3>
+  <p>EL CLIENTE se compromete a: proveer un espacio de escenario mínimo de 6×4 metros; garantizar acceso para montaje con 3 horas de anticipación; proveer acceso a corriente eléctrica suficiente; y garantizar un área de camerino o preparación para el elenco.</p>
+
+  <h3>QUINTA — CANCELACIÓN</h3>
+  <p>En caso de cancelación por parte de EL CLIENTE con menos de 7 días naturales de anticipación, el anticipo quedará a favor de EL PRESTADOR como pena convencional, sin derecho a devolución.</p>
+  <p>En caso de cancelación por parte de EL PRESTADOR con menos de 7 días de anticipación por causa no imputable al caso fortuito o fuerza mayor, EL PRESTADOR devolverá el doble del anticipo recibido.</p>
+
+  <h3>SEXTA — DERECHOS DE IMAGEN</h3>
+  <p>EL CLIENTE podrá fotografiar y difundir imágenes del evento en sus canales de comunicación, siempre que se mencione explícitamente a Studio B como productor del espectáculo. Cualquier uso comercial de las imágenes requerirá autorización escrita de EL PRESTADOR.</p>
+
+  <h3>SÉPTIMA — JURISDICCIÓN</h3>
+  <p>Para todo lo no previsto en el presente contrato, las partes se someten a las leyes vigentes de los Estados Unidos Mexicanos y a los tribunales de la Ciudad de México.</p>
+
+  <p style="margin-top:28px">Firmado en <strong id="co-ciudad">[CIUDAD, FECHA]</strong>.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:36px">
+    <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:12px;font-size:13px">
+      <strong>Studio B Producción Escénica</strong><br>
+      Gerard Estrada · Director Artístico<br>
+      <span style="color:var(--muted)">Firma y sello</span>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:12px;font-size:13px">
+      <strong id="co-cliente2">[EL CLIENTE]</strong><br>
+      <span id="co-rep2">[Representante]</span><br>
+      <span style="color:var(--muted)">Firma y sello</span>
+    </div>
+  </div>
+</div>
+<div class="contract-actions">
+  <button class="btn btn-gold" onclick="window.print()">⬇ IMPRIMIR / GUARDAR PDF</button>
+  <button class="btn btn-outline" onclick="copyContract()">COPIAR TEXTO</button>
+</div>
+```
+
+  </div>
+
+  <div id="cont-c-escuela" class="tab-panel">
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-accent"></div>
+      <div class="card-title" style="margin-bottom:16px">Datos del contrato escolar</div>
+      <div class="form-row">
+        <div><label>Nombre del colegio</label><input type="text" id="ce-colegio" placeholder="Colegio XYZ" oninput="updateEscuelaContract()"></div>
+        <div><label>Director/Coordinador</label><input type="text" id="ce-director" placeholder="Nombre" oninput="updateEscuelaContract()"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Fecha del show</label><input type="date" id="ce-fecha" oninput="updateEscuelaContract()"></div>
+        <div><label>Horario</label><input type="text" id="ce-hora" placeholder="10:00 hrs" oninput="updateEscuelaContract()"></div>
+      </div>
+      <div class="form-row">
+        <div><label>No. de alumnos aprox.</label><input type="number" id="ce-alumnos" placeholder="200" oninput="updateEscuelaContract()"></div>
+        <div><label>Caché total (MXN)</label><input type="number" id="ce-cache" placeholder="12000" oninput="updateEscuelaContract()"></div>
+      </div>
+    </div>
+    <div class="contract-area" id="escuela-contract-output">
+      <h3>CONTRATO DE PRESENTACIÓN ARTÍSTICA ESCOLAR</h3>
+      <p>Que celebran <strong>Studio B Producción Escénica</strong> (EL PRESTADOR) y <strong id="eco-colegio">[COLEGIO]</strong>, representado por <strong id="eco-director">[DIRECTOR]</strong> (EL CLIENTE).</p>
+      <h3>OBJETO</h3>
+      <p>Presentación artística de K-pop Tribute / Show Escolar para aproximadamente <strong id="eco-alumnos">[N]</strong> alumnos, el día <strong id="eco-fecha">[FECHA]</strong> a las <strong id="eco-hora">[HORA]</strong> hrs en las instalaciones del colegio.</p>
+      <h3>CACHÉ Y PAGOS</h3>
+      <p>Caché total: <strong id="eco-cache">$[CACHÉ]</strong> MXN. Anticipo del 50% (<strong id="eco-anticipo">$[ANTICIPO]</strong> MXN) al confirmar. Saldo el día del evento antes de iniciar.</p>
+      <h3>INCLUYE</h3>
+      <p>Elenco completo de 8 performers, equipo de luces y efectos, montaje y desmontaje. El colegio debe proveer espacio mínimo de 6×4m y acceso eléctrico.</p>
+      <h3>CANCELACIÓN</h3>
+      <p>Cancelación con menos de 7 días: anticipo no reembolsable. Reprogramación sin costo con más de 14 días de anticipación (sujeta a disponibilidad).</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:36px">
+        <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:12px;font-size:13px"><strong>Studio B / Gerard Estrada</strong><br><span style="color:var(--muted)">Firma</span></div>
+        <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:12px;font-size:13px"><strong id="eco-director2">[Director del Colegio]</strong><br><span style="color:var(--muted)">Firma y sello oficial</span></div>
+      </div>
+    </div>
+    <div class="contract-actions">
+      <button class="btn btn-gold" onclick="window.print()">⬇ IMPRIMIR / GUARDAR PDF</button>
+    </div>
+  </div>
+
+  <div id="cont-c-taquilla" class="tab-panel">
+    <div class="contract-area">
+      <h3>CONVENIO DE TAQUILLA COMPARTIDA</h3>
+      <p>Que celebran <strong>Studio B Producción Escénica</strong> (EL PRODUCTOR) y <strong class="contract-field">[NOMBRE DEL VENUE]</strong> (EL VENUE).</p>
+      <h3>OBJETO</h3>
+      <p>EL VENUE cede el uso de su espacio el día <span class="contract-field">[FECHA]</span> para la presentación de <span class="contract-field">[NOMBRE DEL SHOW]</span>. No se cobrará renta por el espacio.</p>
+      <h3>DISTRIBUCIÓN DE TAQUILLA</h3>
+      <p>Los ingresos netos de taquilla (deducida la comisión de plataforma de pago) se distribuirán de la siguiente manera:</p>
+      <p>— EL PRODUCTOR (Studio B): <strong>65%</strong> de la taquilla neta.</p>
+      <p>— EL VENUE: <strong>35%</strong> de la taquilla neta, a cambio del uso del espacio.</p>
+      <p>El corte de taquilla se realizará al final de la función en presencia de ambas partes.</p>
+      <h3>OBLIGACIONES DEL VENUE</h3>
+      <p>Proveer el espacio limpio y en condiciones, acceso para montaje 3 horas antes, acceso eléctrico y área de camerino.</p>
+      <h3>OBLIGACIONES DEL PRODUCTOR</h3>
+      <p>Proveer elenco, equipo técnico completo y encargarse de toda la promoción y venta de boletos.</p>
+      <h3>PUBLICIDAD</h3>
+      <p>Ambas partes se mencionarán mutuamente en todos los materiales de comunicación del evento.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:36px">
+        <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:12px;font-size:13px"><strong>Studio B / Gerard Estrada</strong><br><span style="color:var(--muted)">Firma</span></div>
+        <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:12px;font-size:13px"><strong class="contract-field">[Representante del Venue]</strong><br><span style="color:var(--muted)">Firma y sello</span></div>
+      </div>
+    </div>
+    <div class="contract-actions">
+      <button class="btn btn-gold" onclick="window.print()">⬇ IMPRIMIR / GUARDAR PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANEL: TRACKER CRM
+══════════════════════════════════════ -->
+
+<div id="panel-tracker" class="panel">
+  <div class="eyebrow">Seguimiento</div>
+  <div class="section-title">TRACKER DE PROSPECTOS</div>
+  <div class="section-sub">Registra cada contacto y su estado. Actualiza después de cada interacción.</div>
+
+  <!-- Agregar prospecto -->
+
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-accent"></div>
+    <div class="card-title" style="margin-bottom:16px">+ Agregar Prospecto</div>
+    <div class="form-row">
+      <div><label>Nombre / Empresa</label><input type="text" id="tr-nombre" placeholder="Nombre o empresa"></div>
+      <div><label>Tipo de cliente</label>
+        <select id="tr-tipo">
+          <option value="Hotel">Hotel</option>
+          <option value="Empresa">Empresa</option>
+          <option value="Gobierno">Gobierno</option>
+          <option value="Escuela">Escuela</option>
+          <option value="Festival">Festival</option>
+          <option value="Privado">Privado</option>
+          <option value="Circo/Parque">Circo/Parque</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div><label>Contacto / Teléfono</label><input type="text" id="tr-contacto" placeholder="Nombre y teléfono"></div>
+      <div><label>Producto a ofrecer</label>
+        <select id="tr-producto">
+          <option>K-pop Tribute</option>
+          <option>Confesiones de Ópera</option>
+          <option>Show Escolar</option>
+          <option>Recital Íntimo</option>
+          <option>Producción a Medida</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notas / Próximo paso</label>
+      <input type="text" id="tr-notas" placeholder="ej. Llamar el martes, esperan respuesta de dirección...">
+    </div>
+    <button class="btn btn-gold" onclick="addProspect()">+ AGREGAR</button>
+  </div>
+
+  <!-- Filtros -->
+
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <button class="btn btn-ghost" onclick="filterProspects('all',this)" style="font-size:8px">Todos</button>
+    <button class="btn btn-ghost" onclick="filterProspects('Contactado',this)" style="font-size:8px">Contactados</button>
+    <button class="btn btn-ghost" onclick="filterProspects('En negociación',this)" style="font-size:8px">En negociación</button>
+    <button class="btn btn-ghost" onclick="filterProspects('Propuesta enviada',this)" style="font-size:8px">Propuesta enviada</button>
+    <button class="btn btn-ghost" onclick="filterProspects('Cerrado',this)" style="font-size:8px">Cerrados</button>
+  </div>
+
+  <div id="tracker-list">
+    <!-- Precargados -->
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANEL: ESTRATEGIA
+══════════════════════════════════════ -->
+
+<div id="panel-estrategia" class="panel">
+  <div class="eyebrow">Metodología</div>
+  <div class="section-title">ESTRATEGIA DE VENTAS</div>
+  <div class="section-sub">Psicología del comprador, el embudo de cierre y el plan semanal de acción.</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('est','e-psico',this)">Psicología</button>
+    <button class="tab" onclick="showTab('est','e-embudo',this)">Embudo</button>
+    <button class="tab" onclick="showTab('est','e-objeciones',this)">Objeciones</button>
+    <button class="tab" onclick="showTab('est','e-plan',this)">Plan Semanal</button>
+  </div>
+
+  <div id="est-e-psico" class="tab-panel active">
+    <div class="protect" style="font-size:15px;font-style:italic;margin-bottom:24px">"El cliente no compra un show. Compra una solución a un problema que todavía no sabe que tiene."</div>
+    <div class="grid-2">
+      <div class="card"><div class="card-title">🏨 HOTEL</div><div class="card-text">Compra <strong>diferenciación</strong>. Su problema: todos los hoteles ofrecen lo mismo. Tu show convierte una estancia ordinaria en un recuerdo que genera reseñas y regresa clientes.</div></div>
+      <div class="card"><div class="card-title">🏢 EMPRESA / RH</div><div class="card-text">Compra <strong>cohesión y marca</strong>. Necesitan demostrar que invierten en sus empleados. Tu show es la evidencia de que la empresa cuida a su gente.</div></div>
+      <div class="card"><div class="card-title">🏛️ GOBIERNO</div><div class="card-text">Compra <strong>legitimidad política</strong>. Necesitan fotos, prensa y aplausos. Ofréceles explícitamente: "les ayudamos a documentar el evento para su comunicación institucional."</div></div>
+      <div class="card"><div class="card-title">🏫 ESCUELA</div><div class="card-text">Compra <strong>prestigio y tranquilidad</strong>. El director quiere que los papás queden impresionados sin que él tenga que organizar nada.</div></div>
+      <div class="card"><div class="card-title">🎡 FESTIVAL</div><div class="card-text">Compra <strong>audiencia y taquilla</strong>. Habla siempre en términos de afluencia: "un show K-pop puede atraer 200-500 personas adicionales."</div></div>
+      <div class="card"><div class="card-title">💍 PRIVADO</div><div class="card-text">Compra <strong>el momento perfecto</strong>. No comparan precio — comparan impacto emocional. Son tu segmento de mayor ticket y menor fricción.</div></div>
+    </div>
+  </div>
+
+  <div id="est-e-embudo" class="tab-panel">
+    <div class="protect" style="margin-bottom:20px"><strong>El 80% de las ventas se cierran entre el contacto 5 y 12.</strong> La mayoría se rinde en el 2. La constancia gana.</div>
+    <div class="card" style="margin-bottom:10px"><div class="card-title">1 · INVESTIGACIÓN (30 min antes)</div><div class="card-text">Investiga al cliente antes de contactar. ¿Qué eventos hace? ¿Quién decide? Llegar informado te separa de cualquier competidor. <strong>Nunca contactes en frío sin saber a quién le hablas.</strong></div></div>
+    <div class="card" style="margin-bottom:10px"><div class="card-title">2 · PRIMER CONTACTO — El gancho</div><div class="card-text">Email o WhatsApp con: una línea sobre su negocio + video + pregunta suave. <strong>No mandes precios en el primer contacto.</strong> Objetivo: despertar curiosidad.</div></div>
+    <div class="card" style="margin-bottom:10px"><div class="card-title">3 · LA LLAMADA — Diagnóstico</div><div class="card-text">Llama 48 hrs después. Haz preguntas: "¿Qué tipo de eventos hacen normalmente?" <strong>Escucha 70%, habla 30%.</strong> Quien pregunta controla.</div></div>
+    <div class="card" style="margin-bottom:10px"><div class="card-title">4 · PROPUESTA PERSONALIZADA</div><div class="card-text">Usa las palabras exactas del cliente. "Dijiste que lo más importante es X — por eso te recomiendo Y." <strong>Una propuesta que usa las palabras del cliente cierra 3 veces más.</strong></div></div>
+    <div class="card" style="margin-bottom:10px"><div class="card-title">5 · SEGUIMIENTO — Sistema día 1, 3, 7, 14</div><div class="card-text">Día 1: email. Día 3: llamada. Día 7: WhatsApp con novedad. Día 14: última llamada con urgencia. <strong>Sin sistema de seguimiento no hay ventas.</strong></div></div>
+    <div class="card"><div class="card-title">6 · CIERRE — Con urgencia o alternativa</div><div class="card-text">No cierres preguntando "¿qué te parece?". Usa alternativas: <strong>"¿Viernes o sábado?"</strong> o urgencia: <strong>"Tenemos solo una fecha en mayo, ¿la reservamos?"</strong></div></div>
+  </div>
+
+  <div id="est-e-objeciones" class="tab-panel">
+    <div class="card" style="margin-bottom:10px;border-left:3px solid #E74C3C"><div class="card-title" style="color:#E74C3C">❌ "Está muy caro"</div><div class="card-text"><strong>"¿Comparado con qué alternativa?"</strong> — Luego: "Dividimos el costo entre sus asistentes y son [X] pesos por persona por una experiencia que recuerdan meses. ¿Qué presupuesto manejan? Podemos adaptar el formato."</div></div>
+    <div class="card" style="margin-bottom:10px;border-left:3px solid #E74C3C"><div class="card-title" style="color:#E74C3C">❌ "No tenemos presupuesto"</div><div class="card-text"><strong>"¿Presupuesto cero o limitado?"</strong> Si limitado: "¿En qué rango pueden moverse?" Si cero: "¿Cuándo se define el presupuesto del siguiente periodo? Me gustaría quedar en su radar."</div></div>
+    <div class="card" style="margin-bottom:10px;border-left:3px solid #E74C3C"><div class="card-title" style="color:#E74C3C">❌ "Necesito consultarlo con mis superiores"</div><div class="card-text"><strong>"Con gusto les preparo un resumen ejecutivo de una página."</strong> Luego: "¿Cuándo tendrían esa conversación? Para darles seguimiento en el momento correcto y no perder la fecha."</div></div>
+    <div class="card" style="margin-bottom:10px;border-left:3px solid #E74C3C"><div class="card-title" style="color:#E74C3C">❌ "Ya tenemos proveedor"</div><div class="card-text"><strong>"Excelente, eso confirma que valoran el entretenimiento."</strong> Luego: "No busco reemplazarlos. ¿Qué hace su proveedor actual que les funciona bien, y qué les gustaría que fuera diferente?"</div></div>
+    <div class="card" style="border-left:3px solid #E74C3C"><div class="card-title" style="color:#E74C3C">❌ "Mándame información"</div><div class="card-text"><strong>"Con gusto. Para enviarles algo útil — ¿qué tipo de evento consideran y para cuántas personas?"</strong> Luego: "¿A qué correo y cuándo me permiten hacer seguimiento?"</div></div>
+  </div>
+
+  <div id="est-e-plan" class="tab-panel">
+    <div class="protect" style="margin-bottom:20px"><strong>Métrica clave:</strong> 10 contactos → 4 responden → 2 piden propuesta → 1 cierra. Necesitas 30 contactos para cerrar 3 funciones. 3 funciones × $20K = $60,000/mes.</div>
+    <div class="card" style="margin-bottom:10px"><div class="card-title">SEMANA 1 · Preparación del arsenal</div><div class="card-text">Lunes: video del show listo para compartir. Martes: dossier artístico listo. Miércoles: lista de 30 contactos priorizados. Jue-Vie: primeros 10 emails enviados.</div></div>
+    <div class="card" style="margin-bottom:10px"><div class="card-title">SEMANA 2 · Primera oleada</div><div class="card-text">Meta: 30 primeros contactos. Llamada a los 10 del email de semana 1. 10 WhatsApp a directores de escuelas. Registrar todo en el Tracker CRM.</div></div>
+    <div class="card" style="margin-bottom:10px"><div class="card-title">SEMANA 3 · Propuestas y negociación</div><div class="card-text">Meta: 5 propuestas enviadas. Cada una personalizada con lo que dijo en la llamada. Seguimiento 48 hrs después. Esta semana debes tener 1-2 fechas tentativas.</div></div>
+    <div class="card" style="margin-bottom:10px"><div class="card-title">SEMANA 4 · Cierre y anticipo</div><div class="card-text">Presiona con urgencia legítima: "Nuestra agenda se está llenando." Meta: 2 contratos firmados con anticipo. Sin anticipo no está vendido.</div></div>
+    <div class="card"><div class="card-title">SEMANAS 5-6 · Segunda oleada + referidos</div><div class="card-text">Con funciones contratadas pide referidos: "¿Conocen a alguien más que necesite este tipo de entretenimiento?" Un cliente satisfecho abre más puertas que 100 llamadas en frío.</div></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ══ NAVEGACIÓN ══════════════════════════
+function showPanel(id, navItem) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  if (navItem) navItem.classList.add('active');
+  const titles = {
+    dashboard:'Dashboard', directorio:'Directorio de Contactos',
+    correos:'Correos y Mensajes', tratos:'Estructuras de Trato',
+    contratos:'Contratos', tracker:'Tracker CRM', estrategia:'Estrategia de Ventas'
+  };
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+  // Cerrar sidebar en móvil
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+}
+
+// ══ TABS ════════════════════════════════
+function showTab(group, id, btn) {
+  const allPanels = document.querySelectorAll(`[id^="${group}-"]`);
+  const allBtns = btn.closest('.tabs').querySelectorAll('.tab');
+  allPanels.forEach(p => p.classList.remove('active'));
+  allBtns.forEach(b => b.classList.remove('active'));
+  document.getElementById(group + '-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══ SIDEBAR MÓVIL ═══════════════════════
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ══ COPIAR SCRIPTS ═══════════════════════
+function copyScript(id) {
+  const el = document.getElementById(id);
+  const text = el.innerText || el.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    event.target.textContent = '✓ COPIADO';
+    setTimeout(() => event.target.textContent = 'COPIAR', 2000);
+  });
+}
+
+function copyContract() {
+  const el = document.getElementById('contract-output');
+  navigator.clipboard.writeText(el.innerText).then(() => {
+    alert('Contrato copiado al portapapeles');
+  });
+}
+
+// ══ GENERADOR DE CONTRATO ════════════════
+function updateContract() {
+  const f = (id) => document.getElementById(id)?.value || '';
+  const cache = parseFloat(f('cg-cache')) || 0;
+  const anticipo = parseFloat(f('cg-anticipo')) || 0;
+  const saldo = cache - anticipo;
+  const fecha = f('cg-fecha') ? new Date(f('cg-fecha')).toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'}) : '[FECHA]';
+
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val || `[${id.replace('co-','').toUpperCase()}]`; };
+  set('co-cliente', f('cg-cliente') || '[CLIENTE]');
+  set('co-cliente2', f('cg-cliente') || '[CLIENTE]');
+  set('co-rep', f('cg-rep') || '[REPRESENTANTE]');
+  set('co-rep2', f('cg-rep') || '[REPRESENTANTE]');
+  set('co-evento', f('cg-evento') || '[SHOW]');
+  set('co-fecha', fecha);
+  set('co-hora', f('cg-hora') || '[HORA]');
+  set('co-lugar', f('cg-lugar') || '[VENUE]');
+  set('co-duracion', f('cg-duracion') || '[DURACIÓN]');
+  set('co-cache', cache ? `$${cache.toLocaleString()}` : '$[CACHÉ]');
+  set('co-anticipo', anticipo ? `$${anticipo.toLocaleString()}` : '$[ANTICIPO]');
+  set('co-saldo', saldo ? `$${saldo.toLocaleString()}` : '$[SALDO]');
+  set('co-ciudad', f('cg-ciudad') || '[CIUDAD, FECHA]');
+}
+
+function updateEscuelaContract() {
+  const f = (id) => document.getElementById(id)?.value || '';
+  const cache = parseFloat(f('ce-cache')) || 0;
+  const anticipo = cache / 2;
+  const fecha = f('ce-fecha') ? new Date(f('ce-fecha')).toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'}) : '[FECHA]';
+
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  set('eco-colegio', f('ce-colegio') || '[COLEGIO]');
+  set('eco-director', f('ce-director') || '[DIRECTOR]');
+  set('eco-director2', f('ce-director') || '[DIRECTOR]');
+  set('eco-fecha', fecha);
+  set('eco-hora', f('ce-hora') || '[HORA]');
+  set('eco-alumnos', f('ce-alumnos') || '[N]');
+  set('eco-cache', cache ? `$${cache.toLocaleString()}` : '$[CACHÉ]');
+  set('eco-anticipo', anticipo ? `$${anticipo.toLocaleString()}` : '$[ANTICIPO]');
+}
+
+// ══ TRACKER CRM ═════════════════════════
+let prospects = [
+  { id:1, nombre:'Subdirección Cultura Atizapán', tipo:'Gobierno', contacto:'Mtro. Edgar Rainier · 55 2121-3604', producto:'K-pop Tribute / Confesiones de Ópera', status:'Pendiente', notas:'Primer contacto urgente — email + llamada esta semana' },
+  { id:2, nombre:'NH México City Valle Dorado', tipo:'Hotel', contacto:'Coordinador Eventos · 55 1940-3770', producto:'K-pop Tribute', status:'Pendiente', notas:'Enviar email + video. Pedir hablar con Banquetes.' },
+  { id:3, nombre:'Teatro Royal Pedregal', tipo:'Hotel', contacto:'Área de Programación', producto:'Confesiones de Ópera', status:'Pendiente', notas:'Contactar via web. Proponer temporada regular.' },
+];
+let nextId = 4;
+let currentFilter = 'all';
+
+const statuses = ['Pendiente','Contactado','En negociación','Propuesta enviada','Anticipo recibido','Cerrado','Descartado'];
+const statusColors = {
+  'Pendiente':'tag-muted','Contactado':'tag-blue','En negociación':'tag-gold',
+  'Propuesta enviada':'tag-gold','Anticipo recibido':'tag-green','Cerrado':'tag-green','Descartado':'tag-red'
+};
+
+function renderTracker() {
+  const list = document.getElementById('tracker-list');
+  const filtered = currentFilter === 'all' ? prospects : prospects.filter(p => p.status === currentFilter);
+  if (!filtered.length) { list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-family:monospace;font-size:11px;letter-spacing:2px">SIN PROSPECTOS EN ESTA CATEGORÍA</div>'; return; }
+  list.innerHTML = filtered.map(p => `
+    <div class="card" style="margin-bottom:10px" id="prospect-${p.id}">
+      <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:#fff;margin-bottom:3px">${p.nombre}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px">${p.tipo} · ${p.contacto}</div>
+          <div style="font-size:12px;color:rgba(232,226,216,.6);font-style:italic">${p.notas}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex-shrink:0">
+          <span class="tag ${statusColors[p.status]||'tag-muted'}">${p.status}</span>
+          <select onchange="updateStatus(${p.id},this.value)" style="background:var(--card2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:3px;font-size:10px;font-family:'Space Mono',monospace">
+            ${statuses.map(s => `<option value="${s}" ${s===p.status?'selected':''}>${s}</option>`).join('')}
+          </select>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline" style="font-size:7px;padding:5px 10px" onclick="showPanel('correos',document.querySelector('[onclick*=correos]'))">✉ EMAIL</button>
+            <button class="btn btn-ghost" style="font-size:7px;padding:5px 10px;color:#E74C3C;border-color:rgba(192,57,43,.3)" onclick="deleteProspect(${p.id})">✕</button>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.04);display:flex;gap:8px;align-items:center">
+        <span style="font-family:'Space Mono',monospace;font-size:8px;color:var(--muted)">PRODUCTO:</span>
+        <span class="tag tag-gold">${p.producto}</span>
+      </div>
+    </div>`).join('');
+}
+
+function addProspect() {
+  const nombre = document.getElementById('tr-nombre').value.trim();
+  if (!nombre) { alert('Ingresa el nombre del prospecto'); return; }
+  prospects.unshift({
+    id: nextId++,
+    nombre,
+    tipo: document.getElementById('tr-tipo').value,
+    contacto: document.getElementById('tr-contacto').value,
+    producto: document.getElementById('tr-producto').value,
+    status: 'Pendiente',
+    notas: document.getElementById('tr-notas').value
+  });
+  ['tr-nombre','tr-contacto','tr-notas'].forEach(id => document.getElementById(id).value = '');
+  renderTracker();
+}
+
+function updateStatus(id, status) {
+  const p = prospects.find(p => p.id === id);
+  if (p) { p.status = status; renderTracker(); }
+}
+
+function deleteProspect(id) {
+  if (confirm('¿Eliminar este prospecto?')) {
+    prospects = prospects.filter(p => p.id !== id);
+    renderTracker();
+  }
+}
+
+function filterProspects(status, btn) {
+  currentFilter = status;
+  document.querySelectorAll('[onclick^="filterProspects"]').forEach(b => b.classList.remove('btn-gold'));
+  btn.classList.add('btn-gold');
+  renderTracker();
+}
+
+// ══ PROYECCIÓN FINANCIERA ════════════════
+function updateProyeccion() {
+  const funciones = parseInt(document.getElementById('sl-funciones').value);
+  const cachePromedio = parseInt(document.getElementById('sl-cache').value);
+  const costo = parseInt(document.getElementById('sl-costo').value);
+  const pctTaquilla = parseInt(document.getElementById('sl-taquilla').value) / 100;
+
+  document.getElementById('sl-func-val').textContent = funciones;
+  document.getElementById('sl-cache-val').textContent = '$' + cachePromedio.toLocaleString();
+  document.getElementById('sl-costo-val').textContent = '$' + costo.toLocaleString();
+  document.getElementById('sl-taq-val').textContent = Math.round(pctTaquilla * 100) + '%';
+
+  // Funciones de caché vs taquilla
+  const funcTaquilla = Math.round(funciones * pctTaquilla);
+  const funcCache = funciones - funcTaquilla;
+
+  // Ingresos
+  const ingresoCache = funcCache * cachePromedio;
+  // Taquilla: estimamos 70% ocupación de teatro 400 butacas a $300 promedio
+  const ingresoTaquilla = funcTaquilla * 400 * 0.70 * 300;
+  const bruto = ingresoCache + ingresoTaquilla;
+
+  // Costos: producción + renta teatro en taquilla
+  const costoProduccion = funciones * costo;
+  const costoTeatroTaquilla = funcTaquilla * 15000;
+  const costoMarketing = funciones * 2000;
+  const costoTotal = costoProduccion + costoTeatroTaquilla + costoMarketing;
+
+  const neto = bruto - costoTotal;
+  const margen = bruto > 0 ? Math.round((neto / bruto) * 100) : 0;
+  const anual = neto * 12;
+
+  const fmt = (n) => (n < 0 ? '-$' : '$') + Math.abs(Math.round(n)).toLocaleString();
+
+  document.getElementById('res-bruto').textContent = fmt(bruto);
+  document.getElementById('res-costos').textContent = fmt(costoTotal);
+  document.getElementById('res-neto').textContent = fmt(neto);
+  document.getElementById('res-anual').textContent = fmt(anual);
+  document.getElementById('res-margen').textContent = margen + '%';
+  document.getElementById('res-margen2').textContent = margen + '%';
+  document.getElementById('margen-bar').style.width = Math.max(0, Math.min(100, margen)) + '%';
+
+  // Color del neto
+  const netoEl = document.getElementById('res-neto');
+  netoEl.style.color = neto >= 0 ? 'var(--gold)' : '#E74C3C';
+}
+
+function setScenario(tipo, btn) {
+  document.querySelectorAll('[onclick^="setScenario"]').forEach(b => {
+    b.className = 'btn btn-ghost';
+    b.style.fontSize = '8px';
+  });
+  btn.className = 'btn btn-gold';
+  btn.style.fontSize = '8px';
+
+  const scenarios = {
+    pesimista: { funciones:3, cache:15000, costo:13000, taquilla:20 },
+    realista:  { funciones:5, cache:22000, costo:15000, taquilla:30 },
+    optimo:    { funciones:6, cache:30000, costo:15000, taquilla:40 },
+  };
+  const s = scenarios[tipo];
+  document.getElementById('sl-funciones').value = s.funciones;
+  document.getElementById('sl-cache').value = s.cache;
+  document.getElementById('sl-costo').value = s.costo;
+  document.getElementById('sl-taquilla').value = s.taquilla;
+  updateProyeccion();
+}
+
+// Init proyección
+updateProyeccion();
+
+// Init
+renderTracker();
+</script>
+
+</body>
+</html>
