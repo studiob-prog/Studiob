@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossier Artístico · Studio B</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+–gold: #B8963E;
+–gold-light: #D4AF6A;
+–gold-pale: #F0E0B0;
+–black: #060608;
+–dark: #0C0C10;
+–card: #111116;
+–border: rgba(184,150,62,.2);
+–border-strong: rgba(184,150,62,.45);
+–text: #E8E2D8;
+–muted: #7A7468;
+–white: #F5F0E8;
+}
+
+body {
+background: var(–black);
+color: var(–text);
+font-family: ‘Cormorant Garamond’, Georgia, serif;
+font-size: 15px;
+line-height: 1.65;
+}
+
+/* ── PRINT STYLES ────────────────────── */
+@media print {
+body { background:#fff; color:#1a1a1a; }
+.no-print { display:none; }
+.page { box-shadow:none; border:none; }
+.hero-bg { background: #f5f0e8 !important; }
+:root {
+–black:#fff; –dark:#f5f0e8; –card:#fff;
+–text:#1a1a1a; –muted:#666; –border:rgba(0,0,0,.15);
+–border-strong:rgba(0,0,0,.3); –gold:#8B6914; –gold-light:#A07820;
+}
+}
+
+/* ── WRAPPER ─────────────────────────── */
+.page-wrap {
+max-width: 860px;
+margin: 40px auto;
+padding: 0 20px 60px;
+}
+
+/* ── PRINT BUTTON ────────────────────── */
+.print-bar {
+display: flex;
+justify-content: flex-end;
+gap: 10px;
+margin-bottom: 20px;
+}
+.btn-print {
+font-family: ‘Space Mono’, monospace;
+font-size: 10px; letter-spacing: 2px;
+text-transform: uppercase;
+background: rgba(184,150,62,.1);
+border: 1px solid var(–border-strong);
+color: var(–gold-light);
+padding: 8px 18px; border-radius: 2px;
+cursor: pointer; transition: all .2s;
+}
+.btn-print:hover { background: rgba(184,150,62,.2); }
+
+/* ── DOSSIER PAGE ────────────────────── */
+.page {
+background: var(–dark);
+border: 1px solid var(–border);
+position: relative;
+overflow: hidden;
+}
+
+/* Grain */
+.page::after {
+content:’’;
+position:absolute; inset:0; pointer-events:none; z-index:0;
+opacity:.03;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 200 200’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.85’ numOctaves=‘4’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’/%3E%3C/svg%3E”);
+}
+
+/* ── HERO SECTION ────────────────────── */
+.hero-bg {
+background:
+radial-gradient(ellipse 100% 80% at 50% -10%, rgba(184,150,62,.12) 0%, transparent 60%),
+linear-gradient(180deg, #0C0C10 0%, #060608 100%);
+padding: 52px 52px 40px;
+border-bottom: 1px solid var(–border);
+position: relative; z-index:1;
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 32px;
+align-items: start;
+}
+
+.hero-left {}
+
+.eyebrow {
+font-family: ‘Space Mono’, monospace;
+font-size: 9px; letter-spacing: 5px; color: var(–gold);
+text-transform: uppercase;
+display: flex; align-items: center; gap: 10px;
+margin-bottom: 18px;
+}
+.eyebrow::before {
+content:’’; width:24px; height:1px; background:var(–gold);
+}
+
+.studio-name {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 72px; letter-spacing: 10px;
+color: var(–white); line-height: .9;
+margin-bottom: 4px;
+}
+
+.studio-sub {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 17px; font-style: italic;
+color: var(–gold-light); letter-spacing: 2px;
+margin-bottom: 24px;
+}
+
+.tagline {
+font-size: 14px;
+color: var(–muted);
+font-style: italic;
+max-width: 380px;
+line-height: 1.8;
+border-left: 1px solid var(–border-strong);
+padding-left: 16px;
+}
+
+/* HERO RIGHT — contact block */
+.hero-contact {
+background: rgba(184,150,62,.06);
+border: 1px solid var(–border);
+padding: 20px 22px;
+min-width: 190px;
+}
+
+.contact-header {
+font-family: ‘Space Mono’, monospace;
+font-size: 8px; letter-spacing: 3px; color: var(–gold);
+text-transform: uppercase; margin-bottom: 14px;
+}
+
+.contact-line {
+display: flex; gap: 8px; align-items: flex-start;
+font-size: 12px; color: var(–text);
+margin-bottom: 8px; line-height: 1.5;
+}
+.contact-line:last-child { margin-bottom: 0; }
+.c-ico { color: var(–gold); flex-shrink:0; }
+.contact-line a { color: var(–gold-light); text-decoration:none; }
+
+/* ── GOLD RULE ───────────────────────── */
+.gold-rule {
+display: flex; align-items: center; gap: 0;
+height: 2px;
+background: linear-gradient(90deg, transparent, var(–gold) 20%, var(–gold-light) 50%, var(–gold) 80%, transparent);
+}
+
+/* ── BODY SECTION ────────────────────── */
+.body-section {
+padding: 36px 52px;
+border-bottom: 1px solid var(–border);
+position: relative; z-index:1;
+}
+
+.section-label {
+font-family: ‘Space Mono’, monospace;
+font-size: 8px; letter-spacing: 4px; color: var(–gold);
+text-transform: uppercase; margin-bottom: 14px;
+display: flex; align-items: center; gap: 10px;
+}
+.section-label::after {
+content:’’; flex:1; height:1px; background:var(–border); max-width:120px;
+}
+
+/* ── PERFIL ──────────────────────────── */
+.perfil-text {
+font-size: 14.5px;
+line-height: 1.85;
+color: rgba(232,226,216,.85);
+columns: 2;
+column-gap: 32px;
+}
+.perfil-text p { margin-bottom: 10px; break-inside: avoid; }
+.perfil-text strong { color: var(–gold-light); font-weight:600; }
+
+/* ── CATÁLOGO ────────────────────────── */
+.catalog-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 10px;
+margin-bottom: 0;
+}
+@media(max-width:600px){ .catalog-grid{ grid-template-columns:1fr; } }
+
+.cat-item {
+background: rgba(184,150,62,.04);
+border: 1px solid var(–border);
+padding: 14px 16px;
+position: relative;
+}
+.cat-item::before {
+content:’’;
+position:absolute; top:0; left:0; right:0; height:2px;
+background: linear-gradient(90deg, var(–gold), transparent);
+}
+
+.cat-icon-wrap { font-size: 20px; margin-bottom: 6px; }
+.cat-name {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 16px; letter-spacing: 2px; color: var(–white);
+margin-bottom: 3px;
+}
+.cat-format {
+font-family: ‘Space Mono’, monospace;
+font-size: 9px; color: var(–gold); letter-spacing: 1px;
+margin-bottom: 6px;
+}
+.cat-desc { font-size: 11.5px; color: var(–muted); line-height: 1.6; }
+.cat-price {
+font-family: ‘Space Mono’, monospace;
+font-size: 9px; color: var(–gold-light);
+margin-top: 8px; letter-spacing: 1px;
+}
+
+/* ── ELENCO Y PRODUCCIÓN ─────────────── */
+.specs-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 20px;
+}
+
+.spec-block {}
+.spec-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 15px; letter-spacing: 2px;
+color: var(–gold-light); margin-bottom: 8px;
+}
+.spec-list { list-style: none; }
+.spec-list li {
+font-size: 12.5px; color: rgba(232,226,216,.75);
+padding: 4px 0;
+border-bottom: 1px solid rgba(255,255,255,.04);
+display: flex; align-items: center; gap: 8px;
+}
+.spec-list li::before { content:‘◆’; color:var(–gold); font-size:6px; flex-shrink:0; }
+.spec-list li:last-child { border-bottom:none; }
+
+/* ── TRAYECTORIA ─────────────────────── */
+.tray-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+}
+
+.tray-item {
+display: flex; gap: 12px; align-items: flex-start;
+padding: 10px 0;
+border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.tray-item:last-child { border-bottom:none; }
+.tray-dot {
+width: 6px; height: 6px; border-radius: 50%;
+background: var(–gold); flex-shrink:0; margin-top:5px;
+}
+.tray-content {}
+.tray-title { font-size: 13px; color: var(–white); font-weight: 600; margin-bottom: 2px; }
+.tray-sub { font-size: 11px; color: var(–muted); font-style: italic; }
+
+/* ── DIRECTOR ────────────────────────── */
+.director-block {
+display: grid;
+grid-template-columns: auto 1fr;
+gap: 24px;
+align-items: start;
+}
+
+.director-monogram {
+width: 72px; height: 72px;
+background: rgba(184,150,62,.1);
+border: 1px solid var(–border-strong);
+display: flex; align-items: center; justify-content: center;
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 32px; letter-spacing: 3px; color: var(–gold);
+flex-shrink:0;
+}
+.director-name {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 22px; letter-spacing: 3px; color: var(–white);
+margin-bottom: 3px;
+}
+.director-title {
+font-family: ‘Space Mono’, monospace;
+font-size: 9px; letter-spacing: 2px; color: var(–gold);
+text-transform: uppercase; margin-bottom: 10px;
+}
+.director-bio {
+font-size: 12.5px; color: rgba(232,226,216,.7);
+line-height: 1.8;
+}
+.director-bio strong { color: var(–gold-light); }
+
+.creds {
+display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+}
+.cred {
+font-family: ‘Space Mono’, monospace;
+font-size: 9px; letter-spacing: 1px;
+border: 1px solid var(–border-strong);
+color: var(–gold-light);
+padding: 3px 10px;
+background: rgba(184,150,62,.06);
+}
+
+/* ── FOOTER ──────────────────────────── */
+.dossier-footer {
+padding: 18px 52px;
+display: flex; align-items: center; justify-content: space-between;
+gap: 20px; flex-wrap: wrap;
+position: relative; z-index:1;
+background: rgba(184,150,62,.03);
+}
+
+.footer-left {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 13px; font-style: italic; color: var(–muted);
+}
+.footer-left strong { color: var(–gold-light); font-style: normal; }
+
+.footer-venues {
+display: flex; gap: 16px; flex-wrap: wrap;
+}
+.venue-tag {
+font-family: ‘Space Mono’, monospace;
+font-size: 8px; letter-spacing: 2px; color: var(–muted);
+border: 1px solid var(–border);
+padding: 3px 10px;
+text-transform: uppercase;
+}
+
+/* ── DECORATIVE CORNER ───────────────── */
+.corner-tl, .corner-br {
+position: absolute;
+width: 40px; height: 40px;
+pointer-events:none; z-index:2;
+}
+.corner-tl {
+top: 16px; left: 16px;
+border-top: 1px solid var(–border-strong);
+border-left: 1px solid var(–border-strong);
+}
+.corner-br {
+bottom: 16px; right: 16px;
+border-bottom: 1px solid var(–border-strong);
+border-right: 1px solid var(–border-strong);
+}
+
+@media (max-width: 680px) {
+.hero-bg { grid-template-columns:1fr; padding:32px 24px 28px; }
+.body-section { padding:28px 24px; }
+.perfil-text { columns:1; }
+.specs-grid, .tray-grid { grid-template-columns:1fr; }
+.director-block { grid-template-columns:1fr; }
+.dossier-footer { padding:16px 24px; }
+.studio-name { font-size:52px; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- Print button -->
+
+  <div class="print-bar no-print">
+    <button class="btn-print" onclick="window.print()">⬇ GUARDAR / IMPRIMIR PDF</button>
+  </div>
+
+  <!-- ═══════════ DOSSIER PAGE ═══════════ -->
+
+  <div class="page">
+    <div class="corner-tl"></div>
+    <div class="corner-br"></div>
+
+```
+<!-- ── HERO ── -->
+<div class="hero-bg">
+  <div class="hero-left">
+    <div class="eyebrow">Dossier Artístico · 2025</div>
+    <div class="studio-name">STUDIO B</div>
+    <div class="studio-sub">Producción Escénica Profesional</div>
+    <div class="tagline">
+      Donde el rigor académico del INBAL<br>
+      se encuentra con el impacto del entretenimiento contemporáneo.
+    </div>
+  </div>
+
+  <div class="hero-contact">
+    <div class="contact-header">Contacto</div>
+    <div class="contact-line">
+      <span class="c-ico">◆</span>
+      <span><strong>Gerard Estrada</strong><br>Director Artístico</span>
+    </div>
+    <div class="contact-line">
+      <span class="c-ico">◆</span>
+      <span>CDMX · Atizapán de Zaragoza</span>
+    </div>
+    <div class="contact-line">
+      <span class="c-ico">◆</span>
+      <span>studiob.produccion<br>@gmail.com</span>
+    </div>
+    <div class="contact-line" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+      <span class="c-ico">◆</span>
+      <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--gold)">DEMO REEL DISPONIBLE<br>A SOLICITUD</span>
+    </div>
+  </div>
+</div>
+
+<div class="gold-rule"></div>
+
+<!-- ── PERFIL ── -->
+<div class="body-section">
+  <div class="section-label">Perfil de la Compañía</div>
+  <div class="perfil-text">
+    <p><strong>Studio B</strong> es una compañía de producción escénica profesional con sedes en CDMX y Atizapán de Zaragoza, fundada y dirigida por el tenor y director escénico Gerard Estrada.</p>
+    <p>Contamos con un elenco de <strong>8 performers</strong> — 3 bailarinas y 5 bailarines — formados en las instituciones de enseñanza artística más reconocidas de México, incluyendo el INBAL y el Conservatorio Nacional.</p>
+    <p>Nuestra propuesta es única en el mercado: combinamos el <strong>rigor técnico de la formación académica</strong> con la energía y el impacto visual del entretenimiento comercial de alto nivel.</p>
+    <p>Producimos espectáculos <strong>llave en mano</strong>: dirección artística, elenco, equipo de luces profesional, máquinas de humo y sonido. El cliente solo necesita el espacio.</p>
+  </div>
+</div>
+
+<!-- ── CATÁLOGO ── -->
+<div class="body-section">
+  <div class="section-label">Catálogo de Producciones</div>
+  <div class="catalog-grid">
+
+    <div class="cat-item">
+      <div class="cat-icon-wrap">🎤</div>
+      <div class="cat-name">K-POP TRIBUTE</div>
+      <div class="cat-format">Show Comercial · 45–60 min</div>
+      <div class="cat-desc">Tributo de alta producción a los grupos más icónicos del K-pop. 8 performers, coreografías originales, luces y efectos de humo.</div>
+      <div class="cat-price">$15,000 – $40,000 MXN</div>
+    </div>
+
+    <div class="cat-item">
+      <div class="cat-icon-wrap">🎭</div>
+      <div class="cat-name">CONFESIONES DE ÓPERA</div>
+      <div class="cat-format">Teatro Musical · 60 min</div>
+      <div class="cat-desc">Espectáculo interdisciplinario que fusiona ópera, teatro y canción mexicana. Verdi, Puccini, Bizet, Ponce. Formato accesible para todo público.</div>
+      <div class="cat-price">$12,000 – $30,000 MXN</div>
+    </div>
+
+    <div class="cat-item">
+      <div class="cat-icon-wrap">🎪</div>
+      <div class="cat-name">SHOW ESCOLAR</div>
+      <div class="cat-format">Familiar · Interactivo · 30–45 min</div>
+      <div class="cat-desc">Versión diseñada para niños y jóvenes. K-pop + elementos de clown y teatro. Participación del público incluida.</div>
+      <div class="cat-price">$8,000 – $18,000 MXN</div>
+    </div>
+
+    <div class="cat-item">
+      <div class="cat-icon-wrap">🎵</div>
+      <div class="cat-name">RECITAL ÍNTIMO</div>
+      <div class="cat-format">Voz · Piano · 45 min</div>
+      <div class="cat-desc">Tenor solista con pianista. Repertorio clásico, operístico y popular. Ideal para espacios reducidos y eventos VIP.</div>
+      <div class="cat-price">$8,000 – $20,000 MXN</div>
+    </div>
+
+    <div class="cat-item">
+      <div class="cat-icon-wrap">🌟</div>
+      <div class="cat-name">PRODUCCIÓN A MEDIDA</div>
+      <div class="cat-format">Llave en Mano · Duración flexible</div>
+      <div class="cat-desc">Producción artística completa diseñada para el evento del cliente. Cualquier género, cualquier duración, cualquier escala.</div>
+      <div class="cat-price">Desde $35,000 MXN</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── ELENCO Y PRODUCCIÓN ── -->
+<div class="body-section">
+  <div class="section-label">Elenco y Equipo Técnico</div>
+  <div class="specs-grid">
+
+    <div class="spec-block">
+      <div class="spec-title">Elenco</div>
+      <ul class="spec-list">
+        <li>8 performers en escena (3 bailarinas, 5 bailarines)</li>
+        <li>Formación en instituciones INBAL certificadas</li>
+        <li>Tenor solista — voz lírica profesional</li>
+        <li>Pianista colaborador (Alejandro Vigo)</li>
+        <li>Entrenamiento en clown y técnica escénica</li>
+        <li>Repertorio en español, italiano, coreano e inglés</li>
+      </ul>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-title">Producción Incluida</div>
+      <ul class="spec-list">
+        <li>Equipo de iluminación profesional escénica</li>
+        <li>Máquinas de humo y efectos especiales</li>
+        <li>Sistema de sonido profesional</li>
+        <li>Vestuario y utilería de producción</li>
+        <li>Dirección artística y coreográfica</li>
+        <li>Montaje y desmontaje sin costo adicional</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TRAYECTORIA ── -->
+<div class="body-section">
+  <div class="section-label">Trayectoria y Presentaciones</div>
+  <div class="tray-grid">
+
+    <div class="tray-item">
+      <div class="tray-dot"></div>
+      <div class="tray-content">
+        <div class="tray-title">Palacio Postal · CDMX</div>
+        <div class="tray-sub">Presentación en uno de los recintos más icónicos de México</div>
+      </div>
+    </div>
+
+    <div class="tray-item">
+      <div class="tray-dot"></div>
+      <div class="tray-content">
+        <div class="tray-title">Sala Blas Galindo · CNA</div>
+        <div class="tray-sub">Centro Nacional de las Artes · CDMX</div>
+      </div>
+    </div>
+
+    <div class="tray-item">
+      <div class="tray-dot"></div>
+      <div class="tray-content">
+        <div class="tray-title">Librería Rosario Castellanos · CDMX</div>
+        <div class="tray-sub">Estreno de Confesiones de Ópera · Marzo 2025</div>
+      </div>
+    </div>
+
+    <div class="tray-item">
+      <div class="tray-dot"></div>
+      <div class="tray-content">
+        <div class="tray-title">La Casa del Cine · CDMX</div>
+        <div class="tray-sub">Producción escénica interdisciplinaria</div>
+      </div>
+    </div>
+
+    <div class="tray-item">
+      <div class="tray-dot"></div>
+      <div class="tray-content">
+        <div class="tray-title">Teatro SME · CDMX</div>
+        <div class="tray-sub">Guerreras K-pop Tribute · Día del Niño 2025</div>
+      </div>
+    </div>
+
+    <div class="tray-item">
+      <div class="tray-dot"></div>
+      <div class="tray-content">
+        <div class="tray-title">Directores respaldados por Netflix e INBA</div>
+        <div class="tray-sub">Colaboraciones con creadores de trayectoria internacional</div>
+      </div>
+    </div>
+
+    <div class="tray-item">
+      <div class="tray-dot"></div>
+      <div class="tray-content">
+        <div class="tray-title">Postulación IMSS-CULTURA Escenarios 2026</div>
+        <div class="tray-sub">Confesiones de Ópera · En proceso</div>
+      </div>
+    </div>
+
+    <div class="tray-item">
+      <div class="tray-dot"></div>
+      <div class="tray-content">
+        <div class="tray-title">Postulación Creadores Escénicos · FONCA 2026</div>
+        <div class="tray-sub">La voz como idioma del amor · En proceso</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── DIRECTOR ── -->
+<div class="body-section" style="border-bottom:none">
+  <div class="section-label">Director Artístico</div>
+  <div class="director-block">
+    <div class="director-monogram">GE</div>
+    <div>
+      <div class="director-name">GERARD ESTRADA</div>
+      <div class="director-title">Tenor · Actor · Director Escénico</div>
+      <div class="director-bio">
+        Cuenta con doble licenciatura en <strong>Actuación (ENAT-INBAL)</strong> y <strong>Canto Operístico (Escuela Superior de Música-INBAL)</strong>. Ha desarrollado una trayectoria que abarca la ópera, el teatro, el clown y la creación interdisciplinaria. Su formación académica de élite se combina con una visión empresarial que le permite crear productos escénicos de impacto comercial sin sacrificar rigor artístico.
+      </div>
+      <div class="creds">
+        <span class="cred">ENAT · INBAL</span>
+        <span class="cred">ESM · INBAL</span>
+        <span class="cred">Tenor Lírico</span>
+        <span class="cred">Director Escénico</span>
+        <span class="cred">FONCA</span>
+        <span class="cred">FECIJ</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="gold-rule"></div>
+<div class="dossier-footer">
+  <div class="footer-left">
+    <strong>Studio B</strong> · Producción Escénica Profesional<br>
+    CDMX &amp; Atizapán de Zaragoza · México · 2025
+  </div>
+  <div class="footer-venues">
+    <span class="venue-tag">Palacio Postal</span>
+    <span class="venue-tag">CNA · Sala Blas Galindo</span>
+    <span class="venue-tag">Casa del Cine</span>
+    <span class="venue-tag">Teatro SME</span>
+    <span class="venue-tag">INBA · Netflix</span>
+    <span class="venue-tag">FONCA</span>
+  </div>
+</div>
+```
+
+  </div><!-- /page -->
+
+  <!-- NOTA -->
+
+  <div class="no-print" style="margin-top:20px;text-align:center;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#444">
+    Toca "GUARDAR / IMPRIMIR PDF" para descargarlo · Compártelo como archivo o link
+  </div>
+
+</div>
+
+</body>
+</html>
